@@ -23,13 +23,26 @@ test("values", () => {
 });
 
 test("calls", () => {
-  expect(parse(tokenize("fn()"))).toStrictEqual(new CallNode("fn", []));
+  expect(parse(tokenize("fn()"))).toStrictEqual(
+    new CallNode(undefined, "fn", [])
+  );
   expect(parse(tokenize("fn(1)"))).toStrictEqual(
-    new CallNode("fn", [new ValueNode(ValueNode.NumberValue, 1)])
+    new CallNode(undefined, "fn", [new ValueNode(ValueNode.NumberValue, 1)])
   );
   expect(parse(tokenize("fn(fn(1))"))).toStrictEqual(
-    new CallNode("fn", [
-      new CallNode("fn", [new ValueNode(ValueNode.NumberValue, 1)]),
+    new CallNode(undefined, "fn", [
+      new CallNode(undefined, "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
+    ])
+  );
+  expect(parse(tokenize("obj:fn()"))).toStrictEqual(
+    new CallNode("obj", "fn", [])
+  );
+  expect(parse(tokenize("obj:fn(1)"))).toStrictEqual(
+    new CallNode("obj", "fn", [new ValueNode(ValueNode.NumberValue, 1)])
+  );
+  expect(parse(tokenize("obj1:fn(obj2:fn(1))"))).toStrictEqual(
+    new CallNode("obj1", "fn", [
+      new CallNode("obj2", "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
     ])
   );
 });

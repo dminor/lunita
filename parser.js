@@ -35,8 +35,18 @@ function expression(tokens) {
   // See if this variable reference is actually a function call
   if (valueNode.value == ValueNode.VariableRef) {
     const peeked = tokens.peek();
-    if (!peeked.done && peeked.value == Tokens.LPAREN) {
-      return CallNode.tryParse(valueNode.valueData, tokens);
+    if (!peeked.done) {
+      if (peeked.value == Tokens.LPAREN) {
+        return CallNode.tryParse(undefined, valueNode.valueData, tokens);
+      } else if (peeked.value == Tokens.COLON) {
+        tokens.next();
+        const token = tokens.next();
+        if (token != Tokens.ID) {
+          // TODO: Handle syntax error
+        }
+        const method = tokens.next();
+        return CallNode.tryParse(valueNode.valueData, method.value, tokens);
+      }
     }
   }
 
@@ -56,16 +66,18 @@ class ProgramNode extends ASTNode {
 }
 
 class CallNode extends ASTNode {
+  self;
   fun;
   args;
 
-  constructor(funName, args) {
+  constructor(self, fun, args) {
     super();
-    this.funNmae = funName;
+    this.self = self;
+    this.fun = fun;
     this.args = args;
   }
 
-  static tryParse(fun, tokens) {
+  static tryParse(self, fun, tokens) {
     let token = tokens.next();
     if (token.done || token.value != Tokens.LPAREN) {
       // TODO: Handle unexpected end of input or syntax error
@@ -85,10 +97,8 @@ class CallNode extends ASTNode {
         // TODO: Handle syntax error
       }
       args.push(arg);
-      // TODO: We only need to support functions of 0 or 1 argument
-      // Otherwise, we would check for `,` here.
     }
-    return new CallNode(fun, args);
+    return new CallNode(self, fun, args);
   }
 }
 
