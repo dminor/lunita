@@ -1,0 +1,15 @@
+{
+  "name": "lunita",
+  "version": "0.1.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "author": "",
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
