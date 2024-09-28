@@ -14,20 +14,21 @@ export {
 import { Tokens } from "./tokenizer.js";
 
 function peekable(iter) {
-  let state = iter.next().value;
+  let state = iter.next();
 
   const peekableIterator = (function* () {
     while (!state.done) {
       const current = state;
-      state = iter.next().value;
-      yield current;
+      state = iter.next();
+      yield current.value;
     }
-    return { value: state, done: true };
+    return state;
   })();
 
   peekableIterator.peek = function () {
-    return { value: state, done: false };
+    return state;
   };
+
   return peekableIterator;
 }
 
@@ -370,17 +371,6 @@ class ReturnNode {
   }
 }
 
-class ProgramNode {
-  nodes;
-  constructor() {
-    this.nodes = [];
-  }
-
-  static tryParse(tokens) {
-    return statement(tokens);
-  }
-}
-
 class ValueNode {
   value;
   valueData;
@@ -442,5 +432,13 @@ class ValueNode {
 
 function parse(tokens) {
   const peekableTokens = peekable(tokens.values());
-  return ProgramNode.tryParse(peekableTokens);
+  const nodes = [];
+  while (true) {
+    const token = peekableTokens.peek();
+    if (token.done) {
+      break;
+    }
+    nodes.push(statement(peekableTokens));
+  }
+  return nodes;
 }
