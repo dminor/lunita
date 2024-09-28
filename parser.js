@@ -1,4 +1,4 @@
-export { parse, BinaryOperationNode, CallNode, ValueNode };
+export { parse, BinaryOperationNode, CallNode, IfThenNode, ValueNode };
 
 import { Tokens } from "./tokenizer.js";
 
@@ -50,15 +50,12 @@ function expression(tokens) {
   return node;
 }
 
-class ProgramNode {
-  nodes;
-  constructor() {
-    this.nodes = [];
+function statement(tokens) {
+  let node = IfThenNode.tryParse(tokens);
+  if (node) {
+    return node;
   }
-
-  static tryParse(tokens) {
-    return expression(tokens);
-  }
+  return expression(tokens);
 }
 
 class BinaryOperationNode {
@@ -125,6 +122,49 @@ class CallNode {
   }
 }
 
+class IfThenNode {
+  condition;
+  body;
+
+  constructor(condition, body) {
+    this.condition = condition;
+    this.body = body;
+  }
+
+  static tryParse(tokens) {
+    let token = tokens.peek();
+    if (token.done || token.value != Tokens.IF) {
+      return null;
+    }
+
+    tokens.next();
+    const condition = expression(tokens);
+    token = tokens.next();
+    if (token.done || token.value != Tokens.THEN) {
+      // TODO: Handle syntax error
+      return null;
+    }
+    const body = statement(tokens);
+    token = tokens.next();
+    if (token.done || token.value != Tokens.END) {
+      // TODO: Handle syntax error
+      return null;
+    }
+    return new IfThenNode(condition, body);
+  }
+}
+
+class ProgramNode {
+  nodes;
+  constructor() {
+    this.nodes = [];
+  }
+
+  static tryParse(tokens) {
+    return statement(tokens);
+  }
+}
+
 class ValueNode {
   value;
   valueData;
@@ -183,12 +223,6 @@ class ValueNode {
     return null;
   }
 }
-
-class ForLoopNode {}
-
-class FunctionDefinitionNode {}
-
-class IfThenNode {}
 
 function parse(tokens) {
   const peekableTokens = peekable(tokens.values());

@@ -1,4 +1,10 @@
-import { parse, BinaryOperationNode, CallNode, ValueNode } from "./parser.js";
+import {
+  parse,
+  BinaryOperationNode,
+  CallNode,
+  IfThenNode,
+  ValueNode,
+} from "./parser.js";
 import { tokenize } from "./tokenizer.js";
 
 test("values", () => {
@@ -60,6 +66,19 @@ test("binaryops", () => {
       BinaryOperationNode.OpNeq,
       new CallNode("c1", "len", []),
       new CallNode("c2", "len", [])
+    )
+  );
+});
+
+test("ifthen", () => {
+  expect(parse(tokenize("if 1 ~= 2 then 1 end"))).toStrictEqual(
+    new IfThenNode(
+      new BinaryOperationNode(
+        BinaryOperationNode.OpNeq,
+        new ValueNode(ValueNode.NumberValue, 1),
+        new ValueNode(ValueNode.NumberValue, 2)
+      ),
+      new ValueNode(ValueNode.NumberValue, 1)
     )
   );
 });
