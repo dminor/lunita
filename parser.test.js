@@ -1,4 +1,4 @@
-import { parse, CallNode, ValueNode } from "./parser.js";
+import { parse, BinaryOperationNode, CallNode, ValueNode } from "./parser.js";
 import { tokenize } from "./tokenizer.js";
 
 test("values", () => {
@@ -44,5 +44,22 @@ test("calls", () => {
     new CallNode("obj1", "fn", [
       new CallNode("obj2", "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
     ])
+  );
+});
+
+test("binaryops", () => {
+  expect(parse(tokenize("1 ~= 2"))).toStrictEqual(
+    new BinaryOperationNode(
+      BinaryOperationNode.OpNeq,
+      new ValueNode(ValueNode.NumberValue, 1),
+      new ValueNode(ValueNode.NumberValue, 2)
+    )
+  );
+  expect(parse(tokenize("c1:len() ~= c2:len()"))).toStrictEqual(
+    new BinaryOperationNode(
+      BinaryOperationNode.OpNeq,
+      new CallNode("c1", "len", []),
+      new CallNode("c2", "len", [])
+    )
   );
 });

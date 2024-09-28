@@ -1,4 +1,4 @@
-export { parse, CallNode, ValueNode };
+export { parse, BinaryOperationNode, CallNode, ValueNode };
 
 import { Tokens } from "./tokenizer.js";
 
@@ -20,24 +20,14 @@ function peekable(iter) {
   return peekableIterator;
 }
 
-class ASTNode {
-  generate() {}
-  toString() {}
-}
-
-class BinaryOperationNode extends ASTNode {
-  left;
-  right;
-}
-
 function expression(tokens) {
-  const valueNode = ValueNode.tryParse(tokens);
+  let node = ValueNode.tryParse(tokens);
   // See if this variable reference is actually a function call
-  if (valueNode.value == ValueNode.VariableRef) {
+  if (node.value == ValueNode.VariableRef) {
     const peeked = tokens.peek();
     if (!peeked.done) {
       if (peeked.value == Tokens.LPAREN) {
-        return CallNode.tryParse(undefined, valueNode.valueData, tokens);
+        node = CallNode.tryParse(undefined, node.valueData, tokens);
       } else if (peeked.value == Tokens.COLON) {
         tokens.next();
         const token = tokens.next();
@@ -45,18 +35,24 @@ function expression(tokens) {
           // TODO: Handle syntax error
         }
         const method = tokens.next();
-        return CallNode.tryParse(valueNode.valueData, method.value, tokens);
+        node = CallNode.tryParse(node.valueData, method.value, tokens);
       }
     }
   }
 
-  return valueNode;
+  const peeked = tokens.peek();
+  if (!peeked.done) {
+    if (peeked.value == Tokens.NEQ) {
+      return BinaryOperationNode.tryParse(node, tokens);
+    }
+  }
+
+  return node;
 }
 
-class ProgramNode extends ASTNode {
+class ProgramNode {
   nodes;
   constructor() {
-    super();
     this.nodes = [];
   }
 
@@ -65,13 +61,39 @@ class ProgramNode extends ASTNode {
   }
 }
 
-class CallNode extends ASTNode {
+class BinaryOperationNode {
+  op;
+  lhs;
+  rhs;
+  static OpNeq = "neq";
+
+  constructor(op, lhs, rhs) {
+    this.op = op;
+    this.lhs = lhs;
+    this.rhs = rhs;
+  }
+
+  static tryParse(lhs, tokens) {
+    const peeked = tokens.peek();
+    if (!peeked.done) {
+      if (peeked.value == Tokens.NEQ) {
+        tokens.next();
+        const rhs = expression(tokens);
+        if (!rhs) {
+          //TODO: Handle syntax error
+        }
+        return new BinaryOperationNode(BinaryOperationNode.OpNeq, lhs, rhs);
+      }
+    }
+  }
+}
+
+class CallNode {
   self;
   fun;
   args;
 
   constructor(self, fun, args) {
-    super();
     this.self = self;
     this.fun = fun;
     this.args = args;
@@ -90,6 +112,7 @@ class CallNode extends ASTNode {
         // TODO: Handle unexpected end of input
       }
       if (token.value == Tokens.RPAREN) {
+        tokens.next();
         break;
       }
       const arg = expression(tokens);
@@ -102,7 +125,7 @@ class CallNode extends ASTNode {
   }
 }
 
-class ValueNode extends ASTNode {
+class ValueNode {
   value;
   valueData;
 
@@ -113,7 +136,6 @@ class ValueNode extends ASTNode {
   static TableValue = "table";
 
   constructor(value, valueData) {
-    super();
     this.value = value;
     this.valueData = valueData;
   }
@@ -162,11 +184,11 @@ class ValueNode extends ASTNode {
   }
 }
 
-class ForLoopNode extends ASTNode {}
+class ForLoopNode {}
 
-class FunctionDefinitionNode extends ASTNode {}
+class FunctionDefinitionNode {}
 
-class IfThenNode extends ASTNode {}
+class IfThenNode {}
 
 function parse(tokens) {
   const peekableTokens = peekable(tokens.values());
