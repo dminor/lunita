@@ -3,6 +3,7 @@ import {
   AssignmentNode,
   BinaryOperationNode,
   CallNode,
+  ForLoopNode,
   IfThenNode,
   ValueNode,
 } from "./parser.js";
@@ -97,6 +98,26 @@ test("assignments", () => {
       true,
       new ValueNode(ValueNode.VariableRef, "tabla1"),
       new ValueNode(ValueNode.TableValue)
+    )
+  );
+});
+
+test("forloops", () => {
+  expect(
+    parse(tokenize("for i=1, c1:len() do x = c1:byte(i) end"))
+  ).toStrictEqual(
+    new ForLoopNode(
+      new AssignmentNode(
+        false,
+        new ValueNode(ValueNode.VariableRef, "i"),
+        new ValueNode(ValueNode.NumberValue, 1)
+      ),
+      new CallNode("c1", "len", []),
+      new AssignmentNode(
+        false,
+        new ValueNode(ValueNode.VariableRef, "x"),
+        new CallNode("c1", "byte", [new ValueNode(ValueNode.VariableRef, "i")])
+      )
     )
   );
 });

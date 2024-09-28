@@ -40,7 +40,7 @@ important for interviews:
     call       -> (identifier ".")? identifier "(" expression? ")"
     ifthen     -> "if" expression "then" statement "end"
     binaryop   -> expression "~=" expression
-    forloop    -> for identifier "=" expression "," expression "do" statement* "end"
+    forloop    -> for assignment "," expression "do" statement* "end"
     function   -> "function" identifier "(" (identifier ",")* identifier? ")" statement* "end"
     value      -> number | string | identifier | "true" | "false" | "{}"
     number     -> [0-9]+

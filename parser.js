@@ -3,6 +3,7 @@ export {
   AssignmentNode,
   BinaryOperationNode,
   CallNode,
+  ForLoopNode,
   IfThenNode,
   ValueNode,
 };
@@ -66,6 +67,9 @@ function statement(tokens) {
     tokens.next();
     const lhs = ValueNode.tryParse(tokens);
     return AssignmentNode.tryParse(true, lhs, tokens);
+  }
+  if (token.value == Tokens.FOR) {
+    return ForLoopNode.tryParse(tokens);
   }
 
   let node = IfThenNode.tryParse(tokens);
@@ -162,6 +166,46 @@ class CallNode {
       args.push(arg);
     }
     return new CallNode(self, fun, args);
+  }
+}
+
+class ForLoopNode {
+  initializer;
+  range;
+  body;
+
+  constructor(initializer, range, body) {
+    this.initializer = initializer;
+    this.range = range;
+    this.body = body;
+  }
+
+  static tryParse(tokens) {
+    let token = tokens.next();
+    if (token.done || token.value != Tokens.FOR) {
+      // TODO: Handle Syntax error
+      return null;
+    }
+    const variable = ValueNode.tryParse(tokens);
+    const initializer = AssignmentNode.tryParse(false, variable, tokens);
+    token = tokens.next();
+    if (token.done || token.value != Tokens.COMMA) {
+      // TODO: Handle Syntax error
+      return null;
+    }
+    const range = expression(tokens);
+    token = tokens.next();
+    if (token.done || token.value != Tokens.DO) {
+      // TODO: Handle Syntax error
+      return null;
+    }
+    const body = statement(tokens);
+    token = tokens.next();
+    if (token.done || token.value != Tokens.END) {
+      // TODO: Handle Syntax error
+      return null;
+    }
+    return new ForLoopNode(initializer, range, body);
   }
 }
 
