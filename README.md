@@ -36,10 +36,11 @@ important for interviews:
     program    -> statement*
     statement  -> assignment | expression | ifthen | forloop | function
     assignment -> "local"? identifier "=" expression
-    expression -> call | value | binaryop
+    expression -> call | value | binaryop | index
     call       -> (identifier ".")? identifier "(" expression? ")"
     ifthen     -> "if" expression "then" statement "end"
     binaryop   -> expression "~=" expression
+    index      -> identifier "[" expression "]"
     forloop    -> for assignment "," expression "do" statement* "end"
     function   -> "function" identifier "(" (identifier ",")* identifier? ")" statement* "end"
     value      -> number | string | identifier | "true" | "false" | "{}"

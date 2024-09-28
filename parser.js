@@ -5,6 +5,7 @@ export {
   CallNode,
   ForLoopNode,
   IfThenNode,
+  IndexNode,
   ValueNode,
 };
 
@@ -30,7 +31,7 @@ function peekable(iter) {
 
 function expression(tokens) {
   let node = ValueNode.tryParse(tokens);
-  // See if this variable reference is actually a function call
+  // See if this variable reference is actually a function call or index
   if (node.value == ValueNode.VariableRef) {
     const peeked = tokens.peek();
     if (!peeked.done) {
@@ -44,6 +45,8 @@ function expression(tokens) {
         }
         const method = tokens.next();
         node = CallNode.tryParse(node.valueData, method.value, tokens);
+      } else if (peeked.value == Tokens.LBRACKET) {
+        node = IndexNode.tryParse(node.valueData, tokens);
       }
     }
   }
@@ -95,7 +98,7 @@ class AssignmentNode {
   }
 
   static tryParse(isLocal, lhs, tokens) {
-    if (!(lhs instanceof ValueNode) || lhs.value != ValueNode.VariableRef) {
+    if (lhs instanceof ValueNode && lhs.value != ValueNode.VariableRef) {
       // TODO: Handle syntax error
       return null;
     }
@@ -238,6 +241,31 @@ class IfThenNode {
       return null;
     }
     return new IfThenNode(condition, body);
+  }
+}
+
+class IndexNode {
+  identifier;
+  index;
+
+  constructor(identifier, index) {
+    this.identifier = identifier;
+    this.index = index;
+  }
+
+  static tryParse(identifier, tokens) {
+    let token = tokens.next();
+    if (token.done || token.value != Tokens.LBRACKET) {
+      // TODO: Handle syntax error
+      return null;
+    }
+    const index = expression(tokens);
+    token = tokens.next();
+    if (token.done || token.value != Tokens.RBRACKET) {
+      // TODO: Handle syntax error
+      return null;
+    }
+    return new IndexNode(identifier, index);
   }
 }
 

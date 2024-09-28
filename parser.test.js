@@ -5,6 +5,7 @@ import {
   CallNode,
   ForLoopNode,
   IfThenNode,
+  IndexNode,
   ValueNode,
 } from "./parser.js";
 import { tokenize } from "./tokenizer.js";
@@ -104,7 +105,7 @@ test("assignments", () => {
 
 test("forloops", () => {
   expect(
-    parse(tokenize("for i=1, c1:len() do x = c1:byte(i) end"))
+    parse(tokenize("for i=1, c1:len() do tabla1[i] = c1:byte(i) end"))
   ).toStrictEqual(
     new ForLoopNode(
       new AssignmentNode(
@@ -115,9 +116,30 @@ test("forloops", () => {
       new CallNode("c1", "len", []),
       new AssignmentNode(
         false,
-        new ValueNode(ValueNode.VariableRef, "x"),
+        new IndexNode("tabla1", new ValueNode(ValueNode.VariableRef, "i")),
         new CallNode("c1", "byte", [new ValueNode(ValueNode.VariableRef, "i")])
       )
+    )
+  );
+});
+
+test("index", () => {
+  expect(parse(tokenize("i[0]"))).toStrictEqual(
+    new IndexNode("i", new ValueNode(ValueNode.NumberValue, 0))
+  );
+  expect(parse(tokenize("i[0] = 0"))).toStrictEqual(
+    new AssignmentNode(
+      false,
+      new IndexNode("i", new ValueNode(ValueNode.NumberValue, 0)),
+      new ValueNode(ValueNode.NumberValue, 0)
+    )
+  );
+
+  expect(parse(tokenize("tabla1[i] ~= tabla2[i]"))).toStrictEqual(
+    new BinaryOperationNode(
+      BinaryOperationNode.OpNeq,
+      new IndexNode("tabla1", new ValueNode(ValueNode.VariableRef, "i")),
+      new IndexNode("tabla2", new ValueNode(ValueNode.VariableRef, "i"))
     )
   );
 });
