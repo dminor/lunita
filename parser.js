@@ -4,8 +4,10 @@ export {
   BinaryOperationNode,
   CallNode,
   ForLoopNode,
+  FunctionNode,
   IfThenNode,
   IndexNode,
+  ReturnNode,
   ValueNode,
 };
 
@@ -61,6 +63,20 @@ function expression(tokens) {
   return node;
 }
 
+function identifier(tokens) {
+  let token = tokens.next();
+  if (token.done || token.value != Tokens.ID) {
+    // TODO: Handle syntax error
+    return null;
+  }
+  token = tokens.next();
+  if (token.done) {
+    // TODO: Handle syntax error
+    return null;
+  }
+  return token.value;
+}
+
 function statement(tokens) {
   let token = tokens.peek();
   if (token.done) {
@@ -73,6 +89,12 @@ function statement(tokens) {
   }
   if (token.value == Tokens.FOR) {
     return ForLoopNode.tryParse(tokens);
+  }
+  if (token.value == Tokens.FUNCTION) {
+    return FunctionNode.tryParse(tokens);
+  }
+  if (token.value == Tokens.RETURN) {
+    return ReturnNode.tryParse(tokens);
   }
 
   let node = IfThenNode.tryParse(tokens);
@@ -212,6 +234,68 @@ class ForLoopNode {
   }
 }
 
+class FunctionNode {
+  name;
+  parameters;
+  body;
+
+  constructor(name, parameters, body) {
+    this.name = name;
+    this.parameters = parameters;
+    this.body = body;
+  }
+
+  static tryParse(tokens) {
+    let token = tokens.peek();
+    if (token.done || token.value != Tokens.FUNCTION) {
+      return null;
+    }
+    tokens.next();
+    let name = identifier(tokens);
+    token = tokens.next();
+    if (token.done || token.value != Tokens.LPAREN) {
+      // TODO: Handle syntax error
+      return null;
+    }
+    const parameters = [];
+    while (true) {
+      token = tokens.peek();
+      if (token.done) {
+        // TODO: Handle syntax error
+        return null;
+      }
+      if (token.value == Tokens.RPAREN) {
+        tokens.next();
+        break;
+      }
+      let parameter = identifier(tokens);
+      parameters.push(parameter);
+      token = tokens.peek();
+      if (token.done) {
+        // TODO: Handle syntax error
+        return null;
+      }
+      if (token.value == Tokens.COMMA) {
+        tokens.next();
+      }
+    }
+    const body = [];
+    while (true) {
+      token = tokens.peek();
+      if (token.done) {
+        // TODO: Handle syntax error
+        return null;
+      }
+      if (token.value == Tokens.END) {
+        tokens.next();
+        break;
+      }
+      body.push(statement(tokens));
+    }
+    return new FunctionNode(name, parameters, body);
+  }
+}
+
 class IfThenNode {
   condition;
   body;
@@ -266,6 +350,23 @@ class IndexNode {
       return null;
     }
     return new IndexNode(identifier, index);
+  }
+}
+
+class ReturnNode {
+  value;
+
+  constructor(value) {
+    this.value = value;
+  }
+
+  static tryParse(tokens) {
+    let token = tokens.peek();
+    if (token.done || token.value != Tokens.RETURN) {
+      return null;
+    }
+    tokens.next();
+    return new ReturnNode(expression(tokens));
   }
 }
 

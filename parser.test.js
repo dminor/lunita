@@ -4,9 +4,11 @@ import {
   BinaryOperationNode,
   CallNode,
   ForLoopNode,
+  FunctionNode,
   IfThenNode,
   IndexNode,
   ValueNode,
+  ReturnNode,
 } from "./parser.js";
 import { tokenize } from "./tokenizer.js";
 
@@ -140,6 +142,33 @@ test("index", () => {
       BinaryOperationNode.OpNeq,
       new IndexNode("tabla1", new ValueNode(ValueNode.VariableRef, "i")),
       new IndexNode("tabla2", new ValueNode(ValueNode.VariableRef, "i"))
+    )
+  );
+});
+
+test("functions", () => {
+  expect(parse(tokenize("function fn() end"))).toStrictEqual(
+    new FunctionNode("fn", [], [])
+  );
+  expect(parse(tokenize("function fn(i) end"))).toStrictEqual(
+    new FunctionNode("fn", ["i"], [])
+  );
+  expect(parse(tokenize("function fn(i, j) end"))).toStrictEqual(
+    new FunctionNode("fn", ["i", "j"], [])
+  );
+  expect(parse(tokenize("function fn(i, j) return i ~= j end"))).toStrictEqual(
+    new FunctionNode(
+      "fn",
+      ["i", "j"],
+      [
+        new ReturnNode(
+          new BinaryOperationNode(
+            BinaryOperationNode.OpNeq,
+            new ValueNode(ValueNode.VariableRef, "i"),
+            new ValueNode(ValueNode.VariableRef, "j")
+          )
+        ),
+      ]
     )
   );
 });

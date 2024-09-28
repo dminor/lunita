@@ -25,6 +25,7 @@ const Tokens = {
   LOCAL: "local",
   THEN: "then",
   TRUE: "true",
+  RETURN: "return",
 
   // Literals
   NUM: "num",
@@ -126,6 +127,8 @@ function tokenize(source) {
             result.push(Tokens.THEN);
           } else if (string == Tokens.TRUE) {
             result.push(Tokens.TRUE);
+          } else if (string == Tokens.RETURN) {
+            result.push(Tokens.RETURN);
           } else {
             result.push(Tokens.ID, string);
           }

@@ -34,7 +34,7 @@ important for interviews:
 ## Syntax
 
     program    -> statement*
-    statement  -> assignment | expression | ifthen | forloop | function
+    statement  -> assignment | expression | ifthen | forloop | function | return
     assignment -> "local"? identifier "=" expression
     expression -> call | value | binaryop | index
     call       -> (identifier ".")? identifier "(" expression? ")"
@@ -43,6 +43,7 @@ important for interviews:
     index      -> identifier "[" expression "]"
     forloop    -> for assignment "," expression "do" statement* "end"
     function   -> "function" identifier "(" (identifier ",")* identifier? ")" statement* "end"
+    return     -> "return" expression
     value      -> number | string | identifier | "true" | "false" | "{}"
     number     -> [0-9]+
     string     -> "\"" .* "\""
