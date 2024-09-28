@@ -22,6 +22,7 @@ const Tokens = {
   FALSE: "false",
   FUNCTION: "function",
   IF: "if",
+  LOCAL: "local",
   THEN: "then",
   TRUE: "true",
 
@@ -119,6 +120,8 @@ function tokenize(source) {
             result.push(Tokens.FUNCTION);
           } else if (string == Tokens.IF) {
             result.push(Tokens.IF);
+          } else if (string == Tokens.LOCAL) {
+            result.push(Tokens.LOCAL);
           } else if (string == Tokens.THEN) {
             result.push(Tokens.THEN);
           } else if (string == Tokens.TRUE) {

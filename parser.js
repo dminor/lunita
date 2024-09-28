@@ -1,4 +1,11 @@
-export { parse, BinaryOperationNode, CallNode, IfThenNode, ValueNode };
+export {
+  parse,
+  AssignmentNode,
+  BinaryOperationNode,
+  CallNode,
+  IfThenNode,
+  ValueNode,
+};
 
 import { Tokens } from "./tokenizer.js";
 
@@ -51,11 +58,47 @@ function expression(tokens) {
 }
 
 function statement(tokens) {
+  let token = tokens.peek();
+  if (token.done) {
+    // TODO: Handle syntax error
+  }
+  if (token.value == Tokens.LOCAL) {
+    tokens.next();
+    const lhs = ValueNode.tryParse(tokens);
+    return AssignmentNode.tryParse(true, lhs, tokens);
+  }
+
   let node = IfThenNode.tryParse(tokens);
   if (node) {
     return node;
   }
-  return expression(tokens);
+  node = expression(tokens);
+  token = tokens.peek();
+  if (!token.done && token.value == Tokens.EQ) {
+    node = AssignmentNode.tryParse(false, node, tokens);
+  }
+  return node;
+}
+
+class AssignmentNode {
+  local;
+  rhs;
+  lhs;
+  constructor(local, rhs, lhs) {
+    this.local = local;
+    this.rhs = rhs;
+    this.lhs = lhs;
+  }
+
+  static tryParse(isLocal, lhs, tokens) {
+    if (!(lhs instanceof ValueNode) || lhs.value != ValueNode.VariableRef) {
+      // TODO: Handle syntax error
+      return null;
+    }
+    tokens.next();
+    const rhs = expression(tokens);
+    return new AssignmentNode(isLocal, lhs, rhs);
+  }
 }
 
 class BinaryOperationNode {

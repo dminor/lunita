@@ -1,5 +1,6 @@
 import {
   parse,
+  AssignmentNode,
   BinaryOperationNode,
   CallNode,
   IfThenNode,
@@ -79,6 +80,23 @@ test("ifthen", () => {
         new ValueNode(ValueNode.NumberValue, 2)
       ),
       new ValueNode(ValueNode.NumberValue, 1)
+    )
+  );
+});
+
+test("assignments", () => {
+  expect(parse(tokenize("tabla1 = {}"))).toStrictEqual(
+    new AssignmentNode(
+      false,
+      new ValueNode(ValueNode.VariableRef, "tabla1"),
+      new ValueNode(ValueNode.TableValue)
+    )
+  );
+  expect(parse(tokenize("local tabla1 = {}"))).toStrictEqual(
+    new AssignmentNode(
+      true,
+      new ValueNode(ValueNode.VariableRef, "tabla1"),
+      new ValueNode(ValueNode.TableValue)
     )
   );
 });
