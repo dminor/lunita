@@ -1,11 +1,11 @@
 export { Opcodes, VirtualMachine };
 
-class Opcodes {
-  static FALSE = "false";
-  static NEQ = "neq";
-  static ONE = "one";
-  static TRUE = "true";
-}
+const Opcodes = {
+  FALSE: "false",
+  NEQ: "neq",
+  ONE: "one",
+  TRUE: "true",
+};
 
 class VirtualMachine {
   stack;
