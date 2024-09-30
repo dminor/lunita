@@ -10,4 +10,5 @@ test("tokenize", () => {
     "{",
     "}",
   ]);
+  expect(() => tokenize(";")).toThrow();
 });

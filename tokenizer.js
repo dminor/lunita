@@ -32,6 +32,19 @@ const Tokens = {
   STR: "str",
   ID: "id",
 };
+Tokens.keywords = [
+  Tokens.DO,
+  Tokens.ELSE,
+  Tokens.END,
+  Tokens.FALSE,
+  Tokens.FOR,
+  Tokens.FUNCTION,
+  Tokens.IF,
+  Tokens.LOCAL,
+  Tokens.THEN,
+  Tokens.TRUE,
+  Tokens.RETURN,
+];
 
 function tokenize(source) {
   let result = [];
@@ -107,35 +120,15 @@ function tokenize(source) {
         if (matchedString) {
           const string = matchedString[0];
           i += string.length;
-          if (string == Tokens.DO) {
-            result.push(Tokens.DO);
-          } else if (string == Tokens.ELSE) {
-            result.push(Tokens.ELSE);
-          } else if (string == Tokens.END) {
-            result.push(Tokens.END);
-          } else if (string == Tokens.FALSE) {
-            result.push(Tokens.FALSE);
-          } else if (string == Tokens.FOR) {
-            result.push(Tokens.FOR);
-          } else if (string == Tokens.FUNCTION) {
-            result.push(Tokens.FUNCTION);
-          } else if (string == Tokens.IF) {
-            result.push(Tokens.IF);
-          } else if (string == Tokens.LOCAL) {
-            result.push(Tokens.LOCAL);
-          } else if (string == Tokens.THEN) {
-            result.push(Tokens.THEN);
-          } else if (string == Tokens.TRUE) {
-            result.push(Tokens.TRUE);
-          } else if (string == Tokens.RETURN) {
-            result.push(Tokens.RETURN);
+          const idx = Tokens.keywords.indexOf(string);
+          if (idx > -1) {
+            result.push(Tokens.keywords[idx]);
           } else {
             result.push(Tokens.ID, string);
           }
           continue;
         }
-        // TODO: Handle syntax error
-        break;
+        throw "SyntaxError: unrecognized character: " + source[i];
     }
     i += 1;
   }
