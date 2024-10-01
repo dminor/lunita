@@ -7,11 +7,29 @@ test("values", () => {
   expect(vm.stack.length).toBe(1);
   expect(vm.stack[0]).toBe(false);
 
+  instr = [Opcodes.ID, "x"];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe("x");
+
+  instr = [Opcodes.NEWTABLE];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toStrictEqual({});
+
   instr = [Opcodes.ONE];
   vm = new VirtualMachine(instr);
   vm.run();
   expect(vm.stack.length).toBe(1);
   expect(vm.stack[0]).toBe(1);
+
+  instr = [Opcodes.STRING, "hello, world"];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe("hello, world");
 
   instr = [Opcodes.TRUE];
   vm = new VirtualMachine(instr);

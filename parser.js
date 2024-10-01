@@ -386,6 +386,10 @@ class ValueNode {
     this.valueData = valueData;
   }
 
+  visit(visitor) {
+    visitor.visitValueNode(this);
+  }
+
   static tryParse(tokens) {
     const peeked = tokens.peek();
     if (peeked.done) {
