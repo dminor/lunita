@@ -5,7 +5,7 @@ const Opcodes = {
   ID: "id",
   NEQ: "neq",
   NEWTABLE: "newtable",
-  ONE: "one",
+  NUMBER: "number",
   STRING: "string",
   TRUE: "true",
 };
@@ -38,8 +38,9 @@ class VirtualMachine {
       case Opcodes.NEWTABLE:
         this.stack.push({});
         break;
-      case Opcodes.ONE:
-        this.stack.push(1);
+      case Opcodes.NUMBER:
+        this.ip += 1;
+        this.stack.push(this.instructions[this.ip]);
         break;
       case Opcodes.STRING:
         this.ip += 1;

@@ -33,11 +33,8 @@ class CodeGenerator {
           : this.instructions.push(Opcodes.FALSE);
         break;
       case ValueNode.NumberValue:
-        // We only support the number one :)
-        if (node.valueData !== 1) {
-          throw "InternalError: Only the number one is supported";
-        }
-        this.instructions.push(Opcodes.ONE);
+        this.instructions.push(Opcodes.NUMBER);
+        this.instructions.push(node.valueData);
         break;
       case ValueNode.StringValue:
         this.instructions.push(Opcodes.STRING);

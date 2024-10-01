@@ -19,11 +19,11 @@ test("values", () => {
   expect(vm.stack.length).toBe(1);
   expect(vm.stack[0]).toStrictEqual({});
 
-  instr = [Opcodes.ONE];
+  instr = [Opcodes.NUMBER, 42];
   vm = new VirtualMachine(instr);
   vm.run();
   expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe(1);
+  expect(vm.stack[0]).toBe(42);
 
   instr = [Opcodes.STRING, "hello, world"];
   vm = new VirtualMachine(instr);

@@ -23,6 +23,10 @@ test("values", () => {
   expect(cg.instructions).toStrictEqual([Opcodes.TRUE]);
 
   cg = new CodeGenerator();
+  cg.generate(parse(tokenize("42")));
+  expect(cg.instructions).toStrictEqual([Opcodes.NUMBER, 42]);
+
+  cg = new CodeGenerator();
   cg.generate(parse(tokenize('"hello, world"')));
   expect(cg.instructions).toStrictEqual([Opcodes.STRING, "hello, world"]);
 
