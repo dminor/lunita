@@ -1,6 +1,6 @@
 export { CodeGenerator };
 
-import { ValueNode } from "./parser.js";
+import { BinaryOperationNode, ValueNode } from "./parser.js";
 import { Opcodes } from "./vm.js";
 
 class CodeGenerator {
@@ -16,6 +16,15 @@ class CodeGenerator {
     }
   }
 
+  visitBinaryOperationNode(node) {
+    node.lhs.visit(this);
+    node.rhs.visit(this);
+    if (node.op !== BinaryOperationNode.OpNeq) {
+      throw "InternalError: Only the neq operation is supported";
+    }
+    this.instructions.push(Opcodes.NEQ);
+  }
+
   visitValueNode(node) {
     switch (node.value) {
       case ValueNode.BooleanValue:
@@ -25,6 +34,9 @@ class CodeGenerator {
         break;
       case ValueNode.NumberValue:
         // We only support the number one :)
+        if (node.valueData !== 1) {
+          throw "InternalError: Only the number one is supported";
+        }
         this.instructions.push(Opcodes.ONE);
         break;
       case ValueNode.StringValue:

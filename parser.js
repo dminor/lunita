@@ -143,6 +143,10 @@ class BinaryOperationNode {
     this.rhs = rhs;
   }
 
+  visit(visitor) {
+    visitor.visitBinaryOperationNode(this);
+  }
+
   static tryParse(lhs, tokens) {
     const peeked = tokens.peek();
     if (!peeked.done) {

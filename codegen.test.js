@@ -3,6 +3,16 @@ import { parse } from "./parser.js";
 import { Opcodes } from "./vm.js";
 import { tokenize } from "./tokenizer.js";
 
+test("binaryops", () => {
+  let cg = new CodeGenerator();
+  cg.generate(parse(tokenize("true ~= false")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.TRUE,
+    Opcodes.FALSE,
+    Opcodes.NEQ,
+  ]);
+});
+
 test("values", () => {
   let cg = new CodeGenerator();
   cg.generate(parse(tokenize("false")));
