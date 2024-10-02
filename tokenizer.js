@@ -77,7 +77,7 @@ function tokenize(source) {
           i += 1;
           result.push(Tokens.NEQ);
         } else {
-          // TODO: Handle error
+          throw "SyntaxError: expected `=` after `~`";
         }
         break;
       case "}":
@@ -93,6 +93,16 @@ function tokenize(source) {
       case " ":
         break;
       case "\n":
+        break;
+      case "-":
+        // We treat comments as whitespace and do not pass them to the parser
+        if (i + 1 < source.length && source[i + 1] == "-") {
+          while (i < source.length && source[i] != "\n") {
+            i++;
+          }
+        } else {
+          throw "SyntaxError: expected `-` after `-`";
+        }
         break;
       // Strings
       case '"':
