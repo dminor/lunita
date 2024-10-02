@@ -1,3 +1,5 @@
+![lunita logo](lunita-logo-small.png)
+
 # Lunita
 
 A little programming language based upon a subset of [Lua](https://lua.org/).
@@ -48,3 +50,7 @@ important for interviews:
     number     -> [0-9]+
     string     -> "\"" .* "\""
     identifier -> [A-Za-z]+
+
+## Colophon
+
+The lunita logo was made by a souless ai.
