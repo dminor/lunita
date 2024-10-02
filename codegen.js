@@ -22,7 +22,7 @@ class CodeGenerator {
     if (node.local) {
       this.instructions.push(Opcodes.SETENV);
     } else {
-      this.instructions.push(Opcodes.GLOBAL_SETENV);
+      this.instructions.push(Opcodes.SETENV_GLOBAL);
     }
   }
 

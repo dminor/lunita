@@ -74,7 +74,7 @@ test("env", () => {
   expect(vm.stack.length).toBe(0);
   expect(vm.env[0].get("x")).toBe(1);
 
-  instr = [Opcodes.ID, "x", Opcodes.NUMBER, 1, Opcodes.GLOBAL_SETENV];
+  instr = [Opcodes.ID, "x", Opcodes.NUMBER, 1, Opcodes.SETENV_GLOBAL];
   vm = new VirtualMachine(instr);
   vm.env.push(new Map()); // Add a local environment
   vm.run();
@@ -91,7 +91,7 @@ test("env", () => {
     "x",
     Opcodes.NUMBER,
     1,
-    Opcodes.GLOBAL_SETENV,
+    Opcodes.SETENV_GLOBAL,
   ];
   vm = new VirtualMachine(instr);
   vm.env.push(new Map()); // Add a local environment

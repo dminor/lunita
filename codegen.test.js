@@ -10,7 +10,7 @@ test("assignments", () => {
     Opcodes.ID,
     "x",
     Opcodes.TRUE,
-    Opcodes.GLOBAL_SETENV,
+    Opcodes.SETENV_GLOBAL,
   ]);
 
   cg = new CodeGenerator();

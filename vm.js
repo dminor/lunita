@@ -7,9 +7,6 @@ const Opcodes = {
   // Look up the value of identifier in the environment and push it to the stack
   // id -> value
   GETENV: "getenv",
-  // Look up the value of identifier in the global environment and push it to the stack
-  // id -> value
-  GLOBAL_SETENV: "global_setenv",
   // Push an id to the stack
   // -> identifier
   ID: "id",
@@ -25,6 +22,9 @@ const Opcodes = {
   // Set the value of id in the environment to value
   // id value ->
   SETENV: "setenv",
+  // Set the value of id in the global environment to value
+  // id -> value
+  SETENV_GLOBAL: "setenv_global",
   // Push a string to the stack
   // -> string
   STRING: "string",
@@ -73,13 +73,6 @@ class VirtualMachine {
           this.stack.push(value);
         }
         break;
-      case Opcodes.GLOBAL_SETENV:
-        {
-          const value = this.stack.pop();
-          const id = this.stack.pop();
-          this.env[0].set(id, value);
-        }
-        break;
       case Opcodes.ID:
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
@@ -103,6 +96,13 @@ class VirtualMachine {
           this.env[this.env.length - 1].set(id, value);
         }
         break;
+      case Opcodes.SETENV_GLOBAL:
+        {
+          const value = this.stack.pop();
+          const id = this.stack.pop();
+          this.env[0].set(id, value);
+        }
+        break;
       case Opcodes.STRING:
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
@@ -110,6 +110,8 @@ class VirtualMachine {
       case Opcodes.TRUE:
         this.stack.push(true);
         break;
+      default:
+        throw "RuntimeError: Unrecognized bytecode";
     }
     this.ip += 1;
   }
