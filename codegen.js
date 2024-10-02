@@ -17,7 +17,12 @@ class CodeGenerator {
   }
 
   visitAssignmentNode(node) {
-    node.lhs.visit(this);
+    if (node.lhs instanceof ValueNode) {
+      this.instructions.push(Opcodes.ID);
+      this.instructions.push(node.lhs.valueData);
+    } else {
+      // TODO: Handle indexing
+    }
     node.rhs.visit(this);
     if (node.local) {
       this.instructions.push(Opcodes.SETENV);
@@ -56,6 +61,7 @@ class CodeGenerator {
       case ValueNode.VariableRef:
         this.instructions.push(Opcodes.ID);
         this.instructions.push(node.valueData);
+        this.instructions.push(Opcodes.GETENV);
         break;
     }
   }

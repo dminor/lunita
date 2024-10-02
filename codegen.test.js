@@ -56,5 +56,5 @@ test("values", () => {
 
   cg = new CodeGenerator();
   cg.generate(parse(tokenize("x")));
-  expect(cg.instructions).toStrictEqual([Opcodes.ID, "x"]);
+  expect(cg.instructions).toStrictEqual([Opcodes.ID, "x", Opcodes.GETENV]);
 });
