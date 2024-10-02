@@ -100,3 +100,22 @@ test("env", () => {
   expect(vm.env[1].get("x")).toBe(2);
   expect(vm.env[0].get("x")).toBe(1);
 });
+
+test("jumps", () => {
+  let instr = [Opcodes.FALSE, Opcodes.JUMP, 4, Opcodes.TRUE];
+  let vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(false);
+
+  instr = [Opcodes.FALSE, Opcodes.JUMP_IF_FALSE, 4, Opcodes.TRUE];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(0);
+
+  instr = [Opcodes.TRUE, Opcodes.JUMP_IF_FALSE, 4, Opcodes.TRUE];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(true);
+});

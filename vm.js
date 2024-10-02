@@ -10,6 +10,12 @@ const Opcodes = {
   // Push an id to the stack
   // -> identifier
   ID: "id",
+  // Unconditionally jump to the provided ip
+  // ->
+  JUMP: "jump",
+  // Pop a value from the stack, and jump if it is false
+  // boolean ->
+  JUMP_IF_FALSE: "jump_if_false",
   // Pop two values from the stack, see if they are not equal
   // a b -> a ~= b
   NEQ: "neq",
@@ -77,6 +83,18 @@ class VirtualMachine {
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
         break;
+      case Opcodes.JUMP:
+        this.ip += 1;
+        this.ip = this.instructions[this.ip];
+        return;
+      case Opcodes.JUMP_IF_FALSE:
+        this.ip += 1;
+        if (!this.stack.pop()) {
+          this.ip = this.instructions[this.ip];
+        } else {
+          this.ip += 1;
+        }
+        return;
       case Opcodes.NEQ:
         const lhs = this.stack.pop();
         const rhs = this.stack.pop();
