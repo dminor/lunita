@@ -31,6 +31,17 @@ class CodeGenerator {
     }
   }
 
+  visitIfThenNode(node) {
+    node.condition.visit(this);
+    this.instructions.push(Opcodes.JUMP_IF_FALSE);
+    // Track ip to patch in jump address
+    const patch_ip = this.instructions.length;
+    // Reserve space for jump address
+    this.instructions.push(0);
+    node.body.visit(this);
+    this.instructions[patch_ip] = this.instructions.length;
+  }
+
   visitBinaryOperationNode(node) {
     node.lhs.visit(this);
     node.rhs.visit(this);

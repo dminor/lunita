@@ -33,6 +33,25 @@ test("binaryops", () => {
   ]);
 });
 
+test("ifthen", () => {
+  let cg = new CodeGenerator();
+  cg.generate(parse(tokenize("if 1 ~= 2 then x = 1 end")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.NUMBER,
+    1,
+    Opcodes.NUMBER,
+    2,
+    Opcodes.NEQ,
+    Opcodes.JUMP_IF_FALSE,
+    12,
+    Opcodes.ID,
+    "x",
+    Opcodes.NUMBER,
+    1,
+    Opcodes.SETENV_GLOBAL,
+  ]);
+});
+
 test("values", () => {
   let cg = new CodeGenerator();
   cg.generate(parse(tokenize("false")));

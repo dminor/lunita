@@ -314,6 +314,10 @@ class IfThenNode {
     this.body = body;
   }
 
+  visit(visitor) {
+    visitor.visitIfThenNode(this);
+  }
+
   static tryParse(tokens) {
     let token = tokens.peek();
     if (token.done || token.value != Tokens.IF) {
