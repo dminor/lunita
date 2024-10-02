@@ -3,6 +3,26 @@ import { parse } from "./parser.js";
 import { Opcodes } from "./vm.js";
 import { tokenize } from "./tokenizer.js";
 
+test("assignments", () => {
+  let cg = new CodeGenerator();
+  cg.generate(parse(tokenize("x = true")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.ID,
+    "x",
+    Opcodes.TRUE,
+    Opcodes.GLOBAL_SETENV,
+  ]);
+
+  cg = new CodeGenerator();
+  cg.generate(parse(tokenize("local x = {}")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.ID,
+    "x",
+    Opcodes.NEWTABLE,
+    Opcodes.SETENV,
+  ]);
+});
+
 test("binaryops", () => {
   let cg = new CodeGenerator();
   cg.generate(parse(tokenize("true ~= false")));

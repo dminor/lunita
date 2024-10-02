@@ -112,12 +112,16 @@ function statement(tokens) {
 
 class AssignmentNode {
   local;
-  rhs;
   lhs;
-  constructor(local, rhs, lhs) {
+  rhs;
+  constructor(local, lhs, rhs) {
     this.local = local;
-    this.rhs = rhs;
     this.lhs = lhs;
+    this.rhs = rhs;
+  }
+
+  visit(visitor) {
+    visitor.visitAssignmentNode(this);
   }
 
   static tryParse(isLocal, lhs, tokens) {

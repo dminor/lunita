@@ -16,6 +16,16 @@ class CodeGenerator {
     }
   }
 
+  visitAssignmentNode(node) {
+    node.lhs.visit(this);
+    node.rhs.visit(this);
+    if (node.local) {
+      this.instructions.push(Opcodes.SETENV);
+    } else {
+      this.instructions.push(Opcodes.GLOBAL_SETENV);
+    }
+  }
+
   visitBinaryOperationNode(node) {
     node.lhs.visit(this);
     node.rhs.visit(this);
