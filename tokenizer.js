@@ -110,7 +110,6 @@ function tokenize(source) {
         i += 1;
         while (i < source.length) {
           if (source[i] == '"') {
-            i += 1;
             break;
           }
           chars.push(source[i]);

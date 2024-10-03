@@ -31,6 +31,26 @@ class CodeGenerator {
     }
   }
 
+  visitBinaryOperationNode(node) {
+    node.lhs.visit(this);
+    node.rhs.visit(this);
+    if (node.op !== BinaryOperationNode.OpNeq) {
+      throw "InternalError: Only the neq operation is supported";
+    }
+    this.instructions.push(Opcodes.NEQ);
+  }
+
+  visitCallNode(node) {
+    for (const arg of node.args) {
+      arg.visit(this);
+    }
+    // TODO: We need to handle looking up methods using `.` and `:` notation.
+    this.instructions.push(Opcodes.ID);
+    this.instructions.push(node.fun);
+    this.instructions.push(Opcodes.GETENV);
+    this.instructions.push(Opcodes.CALL);
+  }
+
   visitIfThenNode(node) {
     node.condition.visit(this);
     this.instructions.push(Opcodes.JUMP_IF_FALSE);
@@ -40,15 +60,6 @@ class CodeGenerator {
     this.instructions.push(0);
     node.body.visit(this);
     this.instructions[patch_ip] = this.instructions.length;
-  }
-
-  visitBinaryOperationNode(node) {
-    node.lhs.visit(this);
-    node.rhs.visit(this);
-    if (node.op !== BinaryOperationNode.OpNeq) {
-      throw "InternalError: Only the neq operation is supported";
-    }
-    this.instructions.push(Opcodes.NEQ);
   }
 
   visitValueNode(node) {

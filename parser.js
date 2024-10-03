@@ -177,6 +177,10 @@ class CallNode {
     this.args = args;
   }
 
+  visit(visitor) {
+    visitor.visitCallNode(this);
+  }
+
   static tryParse(self, fun, tokens) {
     let token = tokens.next();
     if (token.done || token.value != Tokens.LPAREN) {

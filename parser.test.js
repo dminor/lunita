@@ -19,6 +19,9 @@ test("values", () => {
   expect(parse(tokenize('"true"'))).toStrictEqual([
     new ValueNode(ValueNode.StringValue, "true"),
   ]);
+  expect(parse(tokenize('"hello, world!"'))).toStrictEqual([
+    new ValueNode(ValueNode.StringValue, "hello, world!"),
+  ]);
   expect(parse(tokenize("x"))).toStrictEqual([
     new ValueNode(ValueNode.VariableRef, "x"),
   ]);
@@ -54,6 +57,11 @@ test("calls", () => {
   expect(parse(tokenize("obj1:fn(obj2:fn(1))"))).toStrictEqual([
     new CallNode("obj1", "fn", [
       new CallNode("obj2", "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
+    ]),
+  ]);
+  expect(parse(tokenize('print("hello, world!")'))).toStrictEqual([
+    new CallNode(undefined, "print", [
+      new ValueNode(ValueNode.StringValue, "hello, world!"),
     ]),
   ]);
 });

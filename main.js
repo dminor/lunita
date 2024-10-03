@@ -14,7 +14,7 @@ handle.close();
 
 const tokens = tokenize(program.toString());
 const ast = parse(tokens);
-console.log(ast);
+console.log("AST: ", ast);
 const cg = new CodeGenerator();
 cg.generate(ast);
 const vm = new VirtualMachine(cg.instructions);

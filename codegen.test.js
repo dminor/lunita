@@ -33,6 +33,39 @@ test("binaryops", () => {
   ]);
 });
 
+test("calls", () => {
+  let cg = new CodeGenerator();
+  cg.generate(parse(tokenize("fn()")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.ID,
+    "fn",
+    Opcodes.GETENV,
+    Opcodes.CALL,
+  ]);
+
+  cg = new CodeGenerator();
+  cg.generate(parse(tokenize("fn(1)")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.NUMBER,
+    1,
+    Opcodes.ID,
+    "fn",
+    Opcodes.GETENV,
+    Opcodes.CALL,
+  ]);
+
+  cg = new CodeGenerator();
+  cg.generate(parse(tokenize('fn("hello, world!")')));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.STRING,
+    "hello, world!",
+    Opcodes.ID,
+    "fn",
+    Opcodes.GETENV,
+    Opcodes.CALL,
+  ]);
+});
+
 test("ifthen", () => {
   let cg = new CodeGenerator();
   cg.generate(parse(tokenize("if 1 ~= 2 then x = 1 end")));
