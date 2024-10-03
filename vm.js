@@ -1,6 +1,9 @@
 export { Opcodes, VirtualMachine };
 
 const Opcodes = {
+  // Call the function on the top of the stack with the provided arguments
+  // arg1 arg2 ... argn function ->
+  CALL: "call",
   // Push the boolean false to the stack
   // -> false
   FALSE: "false",
@@ -45,6 +48,13 @@ Nil.toString = function () {
   return "nil";
 };
 
+const PrintBuiltin = {
+  call(vm) {
+    const arg = vm.stack.pop();
+    console.log(arg);
+  },
+};
+
 class VirtualMachine {
   env;
   stack;
@@ -54,6 +64,10 @@ class VirtualMachine {
   constructor(instructions) {
     this.env = [];
     this.env.push(new Map()); // Global environment
+
+    // Add print builtin function to global environment
+    this.env[0].set("print", PrintBuiltin);
+
     this.stack = [];
     this.instructions = instructions;
     this.ip = 0;
@@ -63,6 +77,10 @@ class VirtualMachine {
 
   step() {
     switch (this.instructions[this.ip]) {
+      case Opcodes.CALL:
+        const fn = this.stack.pop();
+        fn.call(this);
+        break;
       case Opcodes.FALSE:
         this.stack.push(false);
         break;

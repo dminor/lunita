@@ -119,3 +119,27 @@ test("jumps", () => {
   expect(vm.stack.length).toBe(1);
   expect(vm.stack[0]).toBe(true);
 });
+
+test("calls", () => {
+  let called;
+  const BuiltinFn = {
+    call(vm) {
+      const arg = vm.stack.pop();
+      called = arg;
+    },
+  };
+
+  let instr = [
+    Opcodes.STRING,
+    "hello, world",
+    Opcodes.ID,
+    "fn",
+    Opcodes.GETENV,
+    Opcodes.CALL,
+  ];
+  let vm = new VirtualMachine(instr);
+  vm.env[0].set("fn", BuiltinFn);
+  vm.run();
+  expect(vm.stack.length).toBe(0);
+  expect(called).toBe("hello, world");
+});
