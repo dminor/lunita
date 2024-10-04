@@ -73,6 +73,14 @@ test("env", () => {
   expect(vm.env[0].get("x")).toBe(1);
 });
 
+test("inc", () => {
+  let instr = [Opcodes.NUMBER, 1, Opcodes.INC];
+  let vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(2);
+});
+
 test("jumps", () => {
   let instr = [Opcodes.FALSE, Opcodes.JUMP, 4, Opcodes.TRUE];
   let vm = new VirtualMachine(instr);
@@ -104,6 +112,32 @@ test("neq", () => {
   vm.run();
   expect(vm.stack.length).toBe(1);
   expect(vm.stack[0]).toBe(false);
+});
+
+test("pop", () => {
+  let instr = [
+    Opcodes.NUMBER,
+    1,
+    Opcodes.NUMBER,
+    2,
+    Opcodes.NUMBER,
+    3,
+    Opcodes.POP,
+    Opcodes.POP,
+  ];
+  let vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(1);
+});
+
+test("swap", () => {
+  let instr = [Opcodes.NUMBER, 1, Opcodes.NUMBER, 2, Opcodes.SWAP];
+  let vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(2);
+  expect(vm.stack[0]).toBe(2);
+  expect(vm.stack[1]).toBe(1);
 });
 
 test("values", () => {

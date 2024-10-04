@@ -13,6 +13,9 @@ const Opcodes = {
   // Push an id to the stack
   // -> identifier
   ID: "id",
+  // Increment the value at the top of the stack
+  // a -> a + 1
+  INC: "inc",
   // Unconditionally jump to the provided ip
   // ->
   JUMP: "jump",
@@ -28,6 +31,8 @@ const Opcodes = {
   // Push a number to the stack
   // -> number
   NUMBER: "number",
+  // Pop the value from the top of the stack
+  POP: "pop",
   // Set the value of id in the environment to value
   // id value ->
   SETENV: "setenv",
@@ -37,6 +42,8 @@ const Opcodes = {
   // Push a string to the stack
   // -> string
   STRING: "string",
+  // Swap the top two values of the stack
+  SWAP: "swap",
   // Push the boolean true to the stack
   // -> true
   TRUE: "true",
@@ -101,6 +108,9 @@ class VirtualMachine {
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
         break;
+      case Opcodes.INC:
+        this.stack[this.stack.length - 1]++;
+        break;
       case Opcodes.JUMP:
         this.ip += 1;
         this.ip = this.instructions[this.ip];
@@ -125,6 +135,9 @@ class VirtualMachine {
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
         break;
+      case Opcodes.POP:
+        this.stack.pop();
+        break;
       case Opcodes.SETENV:
         {
           const value = this.stack.pop();
@@ -143,11 +156,19 @@ class VirtualMachine {
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
         break;
+      case Opcodes.SWAP:
+        const a = this.stack.pop();
+        const b = this.stack.pop();
+        this.stack.push(a);
+        this.stack.push(b);
+        break;
       case Opcodes.TRUE:
         this.stack.push(true);
         break;
       default:
-        throw "RuntimeError: Unrecognized bytecode";
+        throw (
+          "RuntimeError: Unrecognized bytecode: " + this.instructions[this.ip]
+        );
     }
     this.ip += 1;
   }
