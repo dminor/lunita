@@ -62,6 +62,41 @@ class CodeGenerator {
     this.instructions[patch_ip] = this.instructions.length;
   }
 
+  visitForLoopNode(node) {
+    const loopvar = node.initializer.lhs.valueData;
+    node.initializer.visit(this);
+    const jumpAddr = this.instructions.length;
+    this.instructions.push(Opcodes.ID);
+    this.instructions.push(loopvar);
+    this.instructions.push(Opcodes.GETENV);
+    node.range.visit(this);
+    this.instructions.push(Opcodes.NEQ);
+    this.instructions.push(Opcodes.JUMP_IF_FALSE);
+    // Track ip to patch in jump address
+    const patch_ip = this.instructions.length;
+    // Reserve space for jump address
+    this.instructions.push(0);
+    node.body.visit(this);
+    // [STACK]
+    this.instructions.push(Opcodes.ID);
+    this.instructions.push(loopvar);
+    // [STACK] loopvar
+    this.instructions.push(Opcodes.GETENV);
+    // [STACK] env[loopvar]
+    this.instructions.push(Opcodes.INC);
+    // [STACK] env[loopvar]+1
+    this.instructions.push(Opcodes.ID);
+    this.instructions.push(loopvar);
+    // [STACK] env[loopvar]+1 loopvar
+    this.instructions.push(Opcodes.SWAP);
+    // [STACK] loopvar env[loopvar]+1
+    this.instructions.push(Opcodes.SETENV);
+    // [STACK]
+    this.instructions.push(Opcodes.JUMP);
+    this.instructions.push(jumpAddr);
+    this.instructions[patch_ip] = this.instructions.length;
+  }
+
   visitValueNode(node) {
     switch (node.value) {
       case ValueNode.BooleanValue:

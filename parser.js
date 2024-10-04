@@ -214,8 +214,13 @@ class ForLoopNode {
 
   constructor(initializer, range, body) {
     this.initializer = initializer;
+    this.initializer.local = true;
     this.range = range;
     this.body = body;
+  }
+
+  visit(visitor) {
+    visitor.visitForLoopNode(this);
   }
 
   static tryParse(tokens) {

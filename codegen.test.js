@@ -66,6 +66,43 @@ test("calls", () => {
   ]);
 });
 
+test("forloop", () => {
+  let cg = new CodeGenerator();
+  cg.generate(parse(tokenize("for i=1,10 do print(i) end")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.ID,
+    "i",
+    Opcodes.NUMBER,
+    1,
+    Opcodes.SETENV,
+    Opcodes.ID,
+    "i",
+    Opcodes.GETENV,
+    Opcodes.NUMBER,
+    10,
+    Opcodes.NEQ,
+    Opcodes.JUMP_IF_FALSE,
+    30,
+    Opcodes.ID,
+    "i",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "print",
+    Opcodes.GETENV,
+    Opcodes.CALL,
+    Opcodes.ID,
+    "i",
+    Opcodes.GETENV,
+    Opcodes.INC,
+    Opcodes.ID,
+    "i",
+    Opcodes.SWAP,
+    Opcodes.SETENV,
+    Opcodes.JUMP,
+    5,
+  ]);
+});
+
 test("ifthen", () => {
   let cg = new CodeGenerator();
   cg.generate(parse(tokenize("if 1 ~= 2 then x = 1 end")));
