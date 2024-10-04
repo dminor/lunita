@@ -1,55 +1,27 @@
 import { Opcodes, VirtualMachine } from "./vm.js";
 
-test("values", () => {
-  let instr = [Opcodes.FALSE];
+test("calls", () => {
+  let called;
+  const BuiltinFn = {
+    call(vm) {
+      const arg = vm.stack.pop();
+      called = arg;
+    },
+  };
+
+  let instr = [
+    Opcodes.STRING,
+    "hello, world",
+    Opcodes.ID,
+    "fn",
+    Opcodes.GETENV,
+    Opcodes.CALL,
+  ];
   let vm = new VirtualMachine(instr);
+  vm.env[0].set("fn", BuiltinFn);
   vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe(false);
-
-  instr = [Opcodes.ID, "x"];
-  vm = new VirtualMachine(instr);
-  vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe("x");
-
-  instr = [Opcodes.NEWTABLE];
-  vm = new VirtualMachine(instr);
-  vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toStrictEqual({});
-
-  instr = [Opcodes.NUMBER, 42];
-  vm = new VirtualMachine(instr);
-  vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe(42);
-
-  instr = [Opcodes.STRING, "hello, world"];
-  vm = new VirtualMachine(instr);
-  vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe("hello, world");
-
-  instr = [Opcodes.TRUE];
-  vm = new VirtualMachine(instr);
-  vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe(true);
-});
-
-test("neq", () => {
-  let instr = [Opcodes.FALSE, Opcodes.TRUE, Opcodes.NEQ];
-  let vm = new VirtualMachine(instr);
-  vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe(true);
-
-  instr = [Opcodes.TRUE, Opcodes.TRUE, Opcodes.NEQ];
-  vm = new VirtualMachine(instr);
-  vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe(false);
+  expect(vm.stack.length).toBe(0);
+  expect(called).toBe("hello, world");
 });
 
 test("env", () => {
@@ -120,26 +92,54 @@ test("jumps", () => {
   expect(vm.stack[0]).toBe(true);
 });
 
-test("calls", () => {
-  let called;
-  const BuiltinFn = {
-    call(vm) {
-      const arg = vm.stack.pop();
-      called = arg;
-    },
-  };
-
-  let instr = [
-    Opcodes.STRING,
-    "hello, world",
-    Opcodes.ID,
-    "fn",
-    Opcodes.GETENV,
-    Opcodes.CALL,
-  ];
+test("neq", () => {
+  let instr = [Opcodes.FALSE, Opcodes.TRUE, Opcodes.NEQ];
   let vm = new VirtualMachine(instr);
-  vm.env[0].set("fn", BuiltinFn);
   vm.run();
-  expect(vm.stack.length).toBe(0);
-  expect(called).toBe("hello, world");
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(true);
+
+  instr = [Opcodes.TRUE, Opcodes.TRUE, Opcodes.NEQ];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(false);
+});
+
+test("values", () => {
+  let instr = [Opcodes.FALSE];
+  let vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(false);
+
+  instr = [Opcodes.ID, "x"];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe("x");
+
+  instr = [Opcodes.NEWTABLE];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toStrictEqual({});
+
+  instr = [Opcodes.NUMBER, 42];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(42);
+
+  instr = [Opcodes.STRING, "hello, world"];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe("hello, world");
+
+  instr = [Opcodes.TRUE];
+  vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(true);
 });
