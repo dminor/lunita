@@ -2,7 +2,6 @@ export { Tokens, tokenize };
 
 const Tokens = {
   // Symbols
-  COLON: ":",
   COMMA: ",",
   DOT: ".",
   EQ: "=",
@@ -51,9 +50,6 @@ function tokenize(source) {
   let i = 0;
   while (i < source.length) {
     switch (source[i]) {
-      case ":":
-        result.push(Tokens.COLON);
-        break;
       case ",":
         result.push(Tokens.COMMA);
         break;

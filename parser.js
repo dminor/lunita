@@ -40,7 +40,7 @@ function expression(tokens) {
     if (!peeked.done) {
       if (peeked.value == Tokens.LPAREN) {
         node = CallNode.tryParse(undefined, node.valueData, tokens);
-      } else if (peeked.value == Tokens.COLON) {
+      } else if (peeked.value == Tokens.DOT) {
         tokens.next();
         const token = tokens.next();
         if (token != Tokens.ID) {
@@ -202,6 +202,10 @@ class CallNode {
         // TODO: Handle syntax error
       }
       args.push(arg);
+      token = tokens.peek();
+      if (token.value == Tokens.COMMA) {
+        tokens.next();
+      }
     }
     return new CallNode(self, fun, args);
   }

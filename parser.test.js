@@ -48,15 +48,21 @@ test("calls", () => {
       new CallNode(undefined, "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
     ]),
   ]);
-  expect(parse(tokenize("obj:fn()"))).toStrictEqual([
-    new CallNode("obj", "fn", []),
+  expect(parse(tokenize("table.fn()"))).toStrictEqual([
+    new CallNode("table", "fn", []),
   ]);
-  expect(parse(tokenize("obj:fn(1)"))).toStrictEqual([
-    new CallNode("obj", "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
+  expect(parse(tokenize("table.fn(1)"))).toStrictEqual([
+    new CallNode("table", "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
   ]);
-  expect(parse(tokenize("obj1:fn(obj2:fn(1))"))).toStrictEqual([
-    new CallNode("obj1", "fn", [
-      new CallNode("obj2", "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
+  expect(parse(tokenize("table.fn(1, 2)"))).toStrictEqual([
+    new CallNode("table", "fn", [
+      new ValueNode(ValueNode.NumberValue, 1),
+      new ValueNode(ValueNode.NumberValue, 2),
+    ]),
+  ]);
+  expect(parse(tokenize("table1.fn(table2.fn(1))"))).toStrictEqual([
+    new CallNode("table1", "fn", [
+      new CallNode("table2", "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
     ]),
   ]);
   expect(parse(tokenize('print("hello, world!")'))).toStrictEqual([
@@ -74,11 +80,15 @@ test("binaryops", () => {
       new ValueNode(ValueNode.NumberValue, 2)
     ),
   ]);
-  expect(parse(tokenize("c1:len() ~= c2:len()"))).toStrictEqual([
+  expect(parse(tokenize("string.len(c1) ~= string.len(c2)"))).toStrictEqual([
     new BinaryOperationNode(
       BinaryOperationNode.OpNeq,
-      new CallNode("c1", "len", []),
-      new CallNode("c2", "len", [])
+      new CallNode("string", "len", [
+        new ValueNode(ValueNode.VariableRef, "c1"),
+      ]),
+      new CallNode("string", "len", [
+        new ValueNode(ValueNode.VariableRef, "c2"),
+      ])
     ),
   ]);
 });
@@ -115,7 +125,9 @@ test("assignments", () => {
 
 test("forloops", () => {
   expect(
-    parse(tokenize("for i=1, c1:len() do tabla1[i] = c1:byte(i) end"))
+    parse(
+      tokenize("for i=1, string.len(c1) do tabla1[i] = string.byte(c1, i) end")
+    )
   ).toStrictEqual([
     new ForLoopNode(
       new AssignmentNode(
@@ -123,11 +135,16 @@ test("forloops", () => {
         new ValueNode(ValueNode.VariableRef, "i"),
         new ValueNode(ValueNode.NumberValue, 1)
       ),
-      new CallNode("c1", "len", []),
+      new CallNode("string", "len", [
+        new ValueNode(ValueNode.VariableRef, "c1"),
+      ]),
       new AssignmentNode(
         false,
         new IndexNode("tabla1", new ValueNode(ValueNode.VariableRef, "i")),
-        new CallNode("c1", "byte", [new ValueNode(ValueNode.VariableRef, "i")])
+        new CallNode("string", "byte", [
+          new ValueNode(ValueNode.VariableRef, "c1"),
+          new ValueNode(ValueNode.VariableRef, "i"),
+        ])
       )
     ),
   ]);
