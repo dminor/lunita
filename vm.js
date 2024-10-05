@@ -1,6 +1,12 @@
 export { Opcodes, VirtualMachine };
 
-import { Print, TableLen, TableSort } from "./builtins.js";
+import {
+  Print,
+  StringByte,
+  StringLen,
+  TableLen,
+  TableSort,
+} from "./builtins.js";
 
 const Opcodes = {
   // Call the function on the top of the stack with the provided arguments
@@ -75,6 +81,7 @@ class VirtualMachine {
 
     // Add builtins to the global environment
     this.env[0].set("print", Print);
+    this.env[0].set("string", { byte: StringByte, len: StringLen });
     this.env[0].set("table", { len: TableLen, sort: TableSort });
 
     this.stack = [];

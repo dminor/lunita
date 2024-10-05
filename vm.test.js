@@ -131,6 +131,46 @@ test("pop", () => {
   expect(vm.stack[0]).toBe(1);
 });
 
+test("strings", () => {
+  let instr = [
+    Opcodes.ID,
+    "s",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "string",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "len",
+    Opcodes.GETTABLE,
+    Opcodes.CALL,
+  ];
+  let vm = new VirtualMachine(instr);
+  vm.env[0].set("s", "hello, world");
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(12);
+
+  instr = [
+    Opcodes.ID,
+    "s",
+    Opcodes.GETENV,
+    Opcodes.NUMBER,
+    4,
+    Opcodes.ID,
+    "string",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "byte",
+    Opcodes.GETTABLE,
+    Opcodes.CALL,
+  ];
+  vm = new VirtualMachine(instr);
+  vm.env[0].set("s", "hello, world");
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe("l");
+});
+
 test("swap", () => {
   let instr = [Opcodes.NUMBER, 1, Opcodes.NUMBER, 2, Opcodes.SWAP];
   let vm = new VirtualMachine(instr);

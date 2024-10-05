@@ -1,9 +1,24 @@
-export { Print, TableLen, TableSort };
+export { Print, StringByte, StringLen, TableLen, TableSort };
 
 const Print = {
   call(vm) {
     const arg = vm.stack.pop();
     console.log(arg);
+  },
+};
+
+const StringByte = {
+  call(vm) {
+    const idx = vm.stack.pop() - 1; // Lua indices start at 1
+    const s = vm.stack.pop();
+    vm.stack.push(s[idx]);
+  },
+};
+
+const StringLen = {
+  call(vm) {
+    const s = vm.stack.pop();
+    vm.stack.push(s.length);
   },
 };
 
