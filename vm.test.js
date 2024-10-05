@@ -166,6 +166,60 @@ test("tables", () => {
   vm.run();
   expect(vm.stack.length).toBe(1);
   expect(vm.stack[0]).toBe("hello, world");
+
+  instr = [
+    Opcodes.ID,
+    "t",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "table",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "len",
+    Opcodes.GETTABLE,
+    Opcodes.CALL,
+  ];
+  vm = new VirtualMachine(instr);
+  vm.env[0].set("t", { 1: "a", 2: "b", 3: "c", 5: "e" });
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(3);
+
+  vm = new VirtualMachine(instr);
+  vm.env[0].set("t", { 1: "a", 2: "b", 3: "c", 4: "d", 5: "e" });
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(5);
+
+  instr = [
+    Opcodes.ID,
+    "t",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "table",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "sort",
+    Opcodes.GETTABLE,
+    Opcodes.CALL,
+  ];
+  vm = new VirtualMachine(instr);
+  vm.env[0].set("t", { 1: "c", 2: "a", 3: "b", 5: "a" });
+  vm.run();
+  expect(vm.stack.length).toBe(0);
+  expect(vm.env[0].get("t")).toStrictEqual({ 1: "a", 2: "b", 3: "c", 5: "a" });
+
+  vm = new VirtualMachine(instr);
+  vm.env[0].set("t", { 1: "d", 2: "e", 3: "a", 4: "b", 5: "c" });
+  vm.run();
+  expect(vm.stack.length).toBe(0);
+  expect(vm.env[0].get("t")).toStrictEqual({
+    1: "a",
+    2: "b",
+    3: "c",
+    4: "d",
+    5: "e",
+  });
 });
 
 test("values", () => {

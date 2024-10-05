@@ -1,5 +1,7 @@
 export { Opcodes, VirtualMachine };
 
+import { Print, TableLen, TableSort } from "./builtins.js";
+
 const Opcodes = {
   // Call the function on the top of the stack with the provided arguments
   // arg1 arg2 ... argn function ->
@@ -61,13 +63,6 @@ Nil.toString = function () {
   return "nil";
 };
 
-const PrintBuiltin = {
-  call(vm) {
-    const arg = vm.stack.pop();
-    console.log(arg);
-  },
-};
-
 class VirtualMachine {
   env;
   stack;
@@ -78,8 +73,9 @@ class VirtualMachine {
     this.env = [];
     this.env.push(new Map()); // Global environment
 
-    // Add print builtin function to global environment
-    this.env[0].set("print", PrintBuiltin);
+    // Add builtins to the global environment
+    this.env[0].set("print", Print);
+    this.env[0].set("table", { len: TableLen, sort: TableSort });
 
     this.stack = [];
     this.instructions = instructions;
