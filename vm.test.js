@@ -140,6 +140,34 @@ test("swap", () => {
   expect(vm.stack[1]).toBe(1);
 });
 
+test("tables", () => {
+  let instr = [
+    Opcodes.ID,
+    "t",
+    Opcodes.NEWTABLE,
+    Opcodes.SETENV,
+    Opcodes.ID,
+    "t",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    1,
+    Opcodes.STRING,
+    "hello, world",
+    Opcodes.SETTABLE,
+  ];
+  let vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(0);
+  expect(vm.env[0].get("t")).toStrictEqual({ 1: "hello, world" });
+
+  instr = [Opcodes.ID, "t", Opcodes.GETENV, Opcodes.ID, 1, Opcodes.GETTABLE];
+  vm = new VirtualMachine(instr);
+  vm.env[0].set("t", { 1: "hello, world" });
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe("hello, world");
+});
+
 test("values", () => {
   let instr = [Opcodes.FALSE];
   let vm = new VirtualMachine(instr);

@@ -10,6 +10,9 @@ const Opcodes = {
   // Look up the value of identifier in the environment and push it to the stack
   // id -> value
   GETENV: "getenv",
+  // Look up the value of identifier in the table and push it to the stack
+  // table id -> value
+  GETTABLE: "gettable",
   // Push an id to the stack
   // -> identifier
   ID: "id",
@@ -39,6 +42,9 @@ const Opcodes = {
   // Set the value of id in the global environment to value
   // id -> value
   SETENV_GLOBAL: "setenv_global",
+  // Set the value of id in the table to value
+  // table id value ->
+  SETTABLE: "settable",
   // Push a string to the stack
   // -> string
   STRING: "string",
@@ -104,6 +110,17 @@ class VirtualMachine {
           this.stack.push(value);
         }
         break;
+      case Opcodes.GETTABLE:
+        {
+          const id = this.stack.pop();
+          const table = this.stack.pop();
+          if (table.hasOwnProperty(id)) {
+            this.stack.push(table[id]);
+          } else {
+            this.stack.push(Nil);
+          }
+        }
+        break;
       case Opcodes.ID:
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
@@ -150,6 +167,14 @@ class VirtualMachine {
           const value = this.stack.pop();
           const id = this.stack.pop();
           this.env[0].set(id, value);
+        }
+        break;
+      case Opcodes.SETTABLE:
+        {
+          const value = this.stack.pop();
+          const id = this.stack.pop();
+          const table = this.stack.pop();
+          table[id] = value;
         }
         break;
       case Opcodes.STRING:
