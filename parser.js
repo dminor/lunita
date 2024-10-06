@@ -246,11 +246,17 @@ class ForLoopNode {
       // TODO: Handle Syntax error
       return null;
     }
-    const body = statement(tokens);
-    token = tokens.next();
-    if (token.done || token.value != Tokens.END) {
-      // TODO: Handle Syntax error
-      return null;
+    const body = [];
+    while (true) {
+      body.push(statement(tokens));
+      token = tokens.peek();
+      if (token.done) {
+        throw "SyntaxError: Unexpected end of input";
+      }
+      if (token.value == Tokens.END) {
+        tokens.next();
+        break;
+      }
     }
     return new ForLoopNode(initializer, range, body);
   }

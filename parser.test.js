@@ -138,14 +138,16 @@ test("forloops", () => {
       new CallNode("string", "len", [
         new ValueNode(ValueNode.VariableRef, "c1"),
       ]),
-      new AssignmentNode(
-        false,
-        new IndexNode("tabla1", new ValueNode(ValueNode.VariableRef, "i")),
-        new CallNode("string", "byte", [
-          new ValueNode(ValueNode.VariableRef, "c1"),
-          new ValueNode(ValueNode.VariableRef, "i"),
-        ])
-      )
+      [
+        new AssignmentNode(
+          false,
+          new IndexNode("tabla1", new ValueNode(ValueNode.VariableRef, "i")),
+          new CallNode("string", "byte", [
+            new ValueNode(ValueNode.VariableRef, "c1"),
+            new ValueNode(ValueNode.VariableRef, "i"),
+          ])
+        ),
+      ]
     ),
   ]);
 });

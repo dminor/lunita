@@ -114,6 +114,7 @@ class CodeGenerator {
     this.instructions.push(Opcodes.ID);
     this.instructions.push(loopvar);
     this.instructions.push(Opcodes.GETENV);
+    // In Lua, the range is only evaluated once, but we'll evaluate it every time.
     node.range.visit(this);
     this.instructions.push(Opcodes.GTE);
     this.instructions.push(Opcodes.JUMP_IF_FALSE);
@@ -121,7 +122,9 @@ class CodeGenerator {
     const patch_ip = this.instructions.length;
     // Reserve space for jump address
     this.instructions.push(0);
-    node.body.visit(this);
+    for (const statement of node.body) {
+      statement.visit(this);
+    }
     // [STACK]
     this.instructions.push(Opcodes.ID);
     this.instructions.push(loopvar);
