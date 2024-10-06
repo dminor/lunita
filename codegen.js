@@ -1,6 +1,11 @@
 export { CodeGenerator };
 
-import { BinaryOperationNode, ValueNode } from "./parser.js";
+import {
+  AssignmentNode,
+  BinaryOperationNode,
+  IndexNode,
+  ValueNode,
+} from "./parser.js";
 import { Opcodes } from "./vm.js";
 
 class CodeGenerator {
@@ -20,14 +25,21 @@ class CodeGenerator {
     if (node.lhs instanceof ValueNode) {
       this.instructions.push(Opcodes.ID);
       this.instructions.push(node.lhs.valueData);
+      node.rhs.visit(this);
+      if (node.local) {
+        this.instructions.push(Opcodes.SETENV);
+      } else {
+        this.instructions.push(Opcodes.SETENV_GLOBAL);
+      }
+    } else if (node.lhs instanceof IndexNode) {
+      this.instructions.push(Opcodes.ID);
+      this.instructions.push(node.lhs.identifier);
+      this.instructions.push(Opcodes.GETENV);
+      node.lhs.index.visit(this);
+      node.rhs.visit(this);
+      this.instructions.push(Opcodes.SETTABLE);
     } else {
-      // TODO: Handle indexing
-    }
-    node.rhs.visit(this);
-    if (node.local) {
-      this.instructions.push(Opcodes.SETENV);
-    } else {
-      this.instructions.push(Opcodes.SETENV_GLOBAL);
+      throw "InternalError: Unexpected rhs: " + node;
     }
   }
 
@@ -60,6 +72,14 @@ class CodeGenerator {
     this.instructions.push(0);
     node.body.visit(this);
     this.instructions[patch_ip] = this.instructions.length;
+  }
+
+  visitIndexNode(node) {
+    this.instructions.push(Opcodes.ID);
+    this.instructions.push(node.identifier);
+    this.instructions.push(Opcodes.GETENV);
+    node.index.visit(this);
+    this.instructions.push(Opcodes.GETTABLE);
   }
 
   visitForLoopNode(node) {

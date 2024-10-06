@@ -21,6 +21,46 @@ test("assignments", () => {
     Opcodes.NEWTABLE,
     Opcodes.SETENV,
   ]);
+
+  cg = new CodeGenerator();
+  cg.generate(parse(tokenize("x[1] = {}")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.ID,
+    "x",
+    Opcodes.GETENV,
+    Opcodes.NUMBER,
+    1,
+    Opcodes.NEWTABLE,
+    Opcodes.SETTABLE,
+  ]);
+
+  cg = new CodeGenerator();
+  cg.generate(parse(tokenize("x[i] = {}")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.ID,
+    "x",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "i",
+    Opcodes.GETENV,
+    Opcodes.NEWTABLE,
+    Opcodes.SETTABLE,
+  ]);
+
+  cg = new CodeGenerator();
+  cg.generate(parse(tokenize("y = x[i]")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.ID,
+    "y",
+    Opcodes.ID,
+    "x",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "i",
+    Opcodes.GETENV,
+    Opcodes.GETTABLE,
+    Opcodes.SETENV_GLOBAL,
+  ]);
 });
 
 test("binaryops", () => {

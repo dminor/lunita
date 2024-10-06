@@ -363,6 +363,10 @@ class IndexNode {
     this.index = index;
   }
 
+  visit(visitor) {
+    visitor.visitIndexNode(this);
+  }
+
   static tryParse(identifier, tokens) {
     let token = tokens.next();
     if (token.done || token.value != Tokens.LBRACKET) {
