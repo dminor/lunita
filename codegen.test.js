@@ -118,6 +118,20 @@ test("calls", () => {
     Opcodes.GETENV,
     Opcodes.CALL,
   ]);
+
+  cg = new CodeGenerator();
+  cg.generate(parse(tokenize('string.len("hello, world!")')));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.STRING,
+    "hello, world!",
+    Opcodes.ID,
+    "string",
+    Opcodes.GETENV,
+    Opcodes.ID,
+    "len",
+    Opcodes.GETTABLE,
+    Opcodes.CALL,
+  ]);
 });
 
 test("forloop", () => {
