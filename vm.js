@@ -24,6 +24,9 @@ const Opcodes = {
   // Look up the value of identifier in the table and push it to the stack
   // table id -> value
   GETTABLE: "gettable",
+  // Pop two values from the stack, see if they are not equal
+  // a b -> a >= b
+  GTE: "gte",
   // Push an id to the stack
   // -> identifier
   ID: "id",
@@ -48,8 +51,6 @@ const Opcodes = {
   // -> number
   NUMBER: "number",
   // Pop the value from the top of the stack
-  POP: "pop",
-  // Return from a function call
   RET: "ret",
   // Set the value of id in the environment to value
   // id value ->
@@ -137,6 +138,13 @@ class VirtualMachine {
           }
         }
         break;
+      case Opcodes.GTE:
+        {
+          const lhs = this.stack.pop();
+          const rhs = this.stack.pop();
+          this.stack.push(lhs >= rhs);
+        }
+        break;
       case Opcodes.ID:
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
@@ -157,9 +165,11 @@ class VirtualMachine {
         }
         return;
       case Opcodes.NEQ:
-        const lhs = this.stack.pop();
-        const rhs = this.stack.pop();
-        this.stack.push(lhs !== rhs);
+        {
+          const lhs = this.stack.pop();
+          const rhs = this.stack.pop();
+          this.stack.push(lhs !== rhs);
+        }
         break;
       case Opcodes.NOP:
         break;

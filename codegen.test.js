@@ -148,7 +148,7 @@ test("forloop", () => {
     Opcodes.GETENV,
     Opcodes.NUMBER,
     10,
-    Opcodes.NEQ,
+    Opcodes.GTE,
     Opcodes.JUMP_IF_FALSE,
     30,
     Opcodes.ID,

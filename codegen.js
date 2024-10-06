@@ -115,7 +115,7 @@ class CodeGenerator {
     this.instructions.push(loopvar);
     this.instructions.push(Opcodes.GETENV);
     node.range.visit(this);
-    this.instructions.push(Opcodes.NEQ);
+    this.instructions.push(Opcodes.GTE);
     this.instructions.push(Opcodes.JUMP_IF_FALSE);
     // Track ip to patch in jump address
     const patch_ip = this.instructions.length;
