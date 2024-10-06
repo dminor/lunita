@@ -15,6 +15,9 @@ const Opcodes = {
   // Push the boolean false to the stack
   // -> false
   FALSE: "false",
+  // Push a new function value to the stack
+  // -> function
+  FUNCTION: "function",
   // Look up the value of identifier in the environment and push it to the stack
   // id -> value
   GETENV: "getenv",
@@ -36,6 +39,8 @@ const Opcodes = {
   // Pop two values from the stack, see if they are not equal
   // a b -> a ~= b
   NEQ: "neq",
+  // Do nothing at all
+  NOP: "nop",
   // Push a new table to the stack
   // -> {}
   NEWTABLE: "newtable",
@@ -44,6 +49,8 @@ const Opcodes = {
   NUMBER: "number",
   // Pop the value from the top of the stack
   POP: "pop",
+  // Return from a function call
+  RET: "ret",
   // Set the value of id in the environment to value
   // id value ->
   SETENV: "setenv",
@@ -72,6 +79,7 @@ Nil.toString = function () {
 class VirtualMachine {
   env;
   stack;
+  callstack;
   instructions;
   ip;
 
@@ -85,6 +93,7 @@ class VirtualMachine {
     this.env[0].set("table", { len: TableLen, sort: TableSort });
 
     this.stack = [];
+    this.callstack = [];
     this.instructions = instructions;
     this.ip = 0;
   }
@@ -99,6 +108,10 @@ class VirtualMachine {
         break;
       case Opcodes.FALSE:
         this.stack.push(false);
+        break;
+      case Opcodes.FUNCTION:
+        this.ip += 1;
+        this.stack.push(this.instructions[this.ip]);
         break;
       case Opcodes.GETENV:
         {
@@ -148,6 +161,8 @@ class VirtualMachine {
         const rhs = this.stack.pop();
         this.stack.push(lhs !== rhs);
         break;
+      case Opcodes.NOP:
+        break;
       case Opcodes.NEWTABLE:
         this.stack.push({});
         break;
@@ -157,6 +172,11 @@ class VirtualMachine {
         break;
       case Opcodes.POP:
         this.stack.pop();
+        break;
+      case Opcodes.RET:
+        let [ip, instructions] = this.callstack.pop();
+        this.instructions = instructions;
+        this.ip = ip;
         break;
       case Opcodes.SETENV:
         {

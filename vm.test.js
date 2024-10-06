@@ -73,6 +73,24 @@ test("env", () => {
   expect(vm.env[0].get("x")).toBe(1);
 });
 
+test("functions", () => {
+  let instr = [
+    Opcodes.FUNCTION,
+    {
+      call(vm) {
+        vm.callstack.push([vm.ip, vm.instructions]);
+        vm.instructions = [Opcodes.NOP, Opcodes.NUMBER, 42, Opcodes.RET];
+        vm.ip = 0;
+      },
+    },
+    Opcodes.CALL,
+  ];
+  let vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  expect(vm.stack[0]).toBe(42);
+});
+
 test("inc", () => {
   let instr = [Opcodes.NUMBER, 1, Opcodes.INC];
   let vm = new VirtualMachine(instr);
