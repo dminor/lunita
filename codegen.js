@@ -71,10 +71,18 @@ class CodeGenerator {
     for (const arg of node.args) {
       arg.visit(this);
     }
-    // TODO: We need to handle looking up methods using `.` and `:` notation.
-    this.instructions.push(Opcodes.ID);
-    this.instructions.push(node.fun);
-    this.instructions.push(Opcodes.GETENV);
+    if (node.self) {
+      this.instructions.push(Opcodes.ID);
+      this.instructions.push(node.self);
+      this.instructions.push(Opcodes.GETENV);
+      this.instructions.push(Opcodes.ID);
+      this.instructions.push(node.fun);
+      this.instructions.push(Opcodes.GETTABLE);
+    } else {
+      this.instructions.push(Opcodes.ID);
+      this.instructions.push(node.fun);
+      this.instructions.push(Opcodes.GETENV);
+    }
     this.instructions.push(Opcodes.CALL);
   }
 
