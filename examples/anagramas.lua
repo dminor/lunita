@@ -24,8 +24,8 @@ function anagramas(c1, c2)
     return true
 end
 
-print(anagramas("amor", "roma")); --true
-print(anagramas("presa", "pesar")); --true
-print(anagramas("tinieblas", "sibilante")); --true
-print(anagramas("carol", "zero")); --false
-print(anagramas("caro", "zero")); --false
+print(anagramas("amor", "roma")) --true
+print(anagramas("presa", "pesar")) --true
+print(anagramas("tinieblas", "sibilante")) --true
+print(anagramas("carol", "zero")) --false
+print(anagramas("caro", "zero")) --false

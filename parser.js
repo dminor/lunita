@@ -267,6 +267,10 @@ class FunctionNode {
     this.body = body;
   }
 
+  visit(visitor) {
+    visitor.visitFunctionNode(this);
+  }
+
   static tryParse(tokens) {
     let token = tokens.peek();
     if (token.done || token.value != Tokens.FUNCTION) {
@@ -388,6 +392,10 @@ class ReturnNode {
 
   constructor(value) {
     this.value = value;
+  }
+
+  visit(visitor) {
+    visitor.visitReturnNode(this);
   }
 
   static tryParse(tokens) {

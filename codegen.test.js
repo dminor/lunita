@@ -61,6 +61,20 @@ test("assignments", () => {
     Opcodes.GETTABLE,
     Opcodes.SETENV_GLOBAL,
   ]);
+  cg = new CodeGenerator();
+  cg.generate(parse(tokenize("local y = 0 y = 1")));
+  expect(cg.instructions).toStrictEqual([
+    Opcodes.ID,
+    "y",
+    Opcodes.NUMBER,
+    0,
+    Opcodes.SETENV,
+    Opcodes.ID,
+    "y",
+    Opcodes.NUMBER,
+    1,
+    Opcodes.SETENV,
+  ]);
 });
 
 test("binaryops", () => {
