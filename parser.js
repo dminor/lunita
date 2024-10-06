@@ -43,8 +43,8 @@ function expression(tokens) {
       } else if (peeked.value == Tokens.DOT) {
         tokens.next();
         const token = tokens.next();
-        if (token != Tokens.ID) {
-          // TODO: Handle syntax error
+        if (token.value !== Tokens.ID) {
+          throw "SyntaxError: Expected identifier";
         }
         const method = tokens.next();
         node = CallNode.tryParse(node.valueData, method.value, tokens);
@@ -67,13 +67,11 @@ function expression(tokens) {
 function identifier(tokens) {
   let token = tokens.next();
   if (token.done || token.value != Tokens.ID) {
-    // TODO: Handle syntax error
-    return null;
+    throw "SyntaxError: Expected identifier";
   }
   token = tokens.next();
   if (token.done) {
-    // TODO: Handle syntax error
-    return null;
+    throw "SyntaxError: Unexpected end of input";
   }
   return token.value;
 }
@@ -81,7 +79,7 @@ function identifier(tokens) {
 function statement(tokens) {
   let token = tokens.peek();
   if (token.done) {
-    // TODO: Handle syntax error
+    throw "SyntaxError: Unexpected end of input";
   }
   if (token.value == Tokens.LOCAL) {
     tokens.next();
@@ -126,8 +124,7 @@ class AssignmentNode {
 
   static tryParse(isLocal, lhs, tokens) {
     if (lhs instanceof ValueNode && lhs.value != ValueNode.VariableRef) {
-      // TODO: Handle syntax error
-      return null;
+      throw "SyntaxError: Expected variable reference";
     }
     tokens.next();
     const rhs = expression(tokens);
@@ -158,7 +155,7 @@ class BinaryOperationNode {
         tokens.next();
         const rhs = expression(tokens);
         if (!rhs) {
-          //TODO: Handle syntax error
+          throw "SyntaxError: Expected expression";
         }
         return new BinaryOperationNode(BinaryOperationNode.OpNeq, lhs, rhs);
       }
@@ -184,14 +181,14 @@ class CallNode {
   static tryParse(self, fun, tokens) {
     let token = tokens.next();
     if (token.done || token.value != Tokens.LPAREN) {
-      // TODO: Handle unexpected end of input or syntax error
+      throw "SyntaxError: Expected `)`";
     }
     // Parse arguments
     let args = [];
     while (true) {
       token = tokens.peek();
       if (token.done) {
-        // TODO: Handle unexpected end of input
+        throw "SyntaxError: Unexpected end of input";
       }
       if (token.value == Tokens.RPAREN) {
         tokens.next();
@@ -199,7 +196,7 @@ class CallNode {
       }
       const arg = expression(tokens);
       if (!arg) {
-        // TODO: Handle syntax error
+        throw "SyntaxError: Expected expression while parsing arguments";
       }
       args.push(arg);
       token = tokens.peek();
@@ -230,21 +227,18 @@ class ForLoopNode {
   static tryParse(tokens) {
     let token = tokens.next();
     if (token.done || token.value != Tokens.FOR) {
-      // TODO: Handle Syntax error
-      return null;
+      throw "SyntaxError: Expected `for`";
     }
     const variable = ValueNode.tryParse(tokens);
     const initializer = AssignmentNode.tryParse(false, variable, tokens);
     token = tokens.next();
     if (token.done || token.value != Tokens.COMMA) {
-      // TODO: Handle Syntax error
-      return null;
+      throw "SyntaxError: Expected `,`";
     }
     const range = expression(tokens);
     token = tokens.next();
     if (token.done || token.value != Tokens.DO) {
-      // TODO: Handle Syntax error
-      return null;
+      throw "SyntaxError: Expected `do`";
     }
     const body = [];
     while (true) {
@@ -280,21 +274,19 @@ class FunctionNode {
   static tryParse(tokens) {
     let token = tokens.peek();
     if (token.done || token.value != Tokens.FUNCTION) {
-      return null;
+      throw "SyntaxError: Expected `function`";
     }
     tokens.next();
     let name = identifier(tokens);
     token = tokens.next();
     if (token.done || token.value != Tokens.LPAREN) {
-      // TODO: Handle syntax error
-      return null;
+      throw "SyntaxError: Expected `)`";
     }
     const parameters = [];
     while (true) {
       token = tokens.peek();
       if (token.done) {
-        // TODO: Handle syntax error
-        return null;
+        throw "SyntaxError: Unexpected end of input";
       }
       if (token.value == Tokens.RPAREN) {
         tokens.next();
@@ -304,8 +296,7 @@ class FunctionNode {
       parameters.push(parameter);
       token = tokens.peek();
       if (token.done) {
-        // TODO: Handle syntax error
-        return null;
+        throw "SyntaxError: Unexpected end of input";
       }
       if (token.value == Tokens.COMMA) {
         tokens.next();
@@ -315,8 +306,7 @@ class FunctionNode {
     while (true) {
       token = tokens.peek();
       if (token.done) {
-        // TODO: Handle syntax error
-        return null;
+        throw "SyntaxError: Unexpected end of input";
       }
       if (token.value == Tokens.END) {
         tokens.next();
@@ -351,14 +341,12 @@ class IfThenNode {
     const condition = expression(tokens);
     token = tokens.next();
     if (token.done || token.value != Tokens.THEN) {
-      // TODO: Handle syntax error
-      return null;
+      throw "SyntaxError: Expected `then`";
     }
     const body = statement(tokens);
     token = tokens.next();
     if (token.done || token.value != Tokens.END) {
-      // TODO: Handle syntax error
-      return null;
+      throw "SyntaxError: Expected `then`";
     }
     return new IfThenNode(condition, body);
   }
@@ -380,14 +368,12 @@ class IndexNode {
   static tryParse(identifier, tokens) {
     let token = tokens.next();
     if (token.done || token.value != Tokens.LBRACKET) {
-      // TODO: Handle syntax error
-      return null;
+      throw "SyntaxError: Expected `[`";
     }
     const index = expression(tokens);
     token = tokens.next();
     if (token.done || token.value != Tokens.RBRACKET) {
-      // TODO: Handle syntax error
-      return null;
+      throw "SyntaxError: Expected `]`";
     }
     return new IndexNode(identifier, index);
   }
@@ -407,7 +393,7 @@ class ReturnNode {
   static tryParse(tokens) {
     let token = tokens.peek();
     if (token.done || token.value != Tokens.RETURN) {
-      return null;
+      throw "SyntaxError: Expected `return`";
     }
     tokens.next();
     return new ReturnNode(expression(tokens));
@@ -436,27 +422,27 @@ class ValueNode {
   static tryParse(tokens) {
     const peeked = tokens.peek();
     if (peeked.done) {
-      // TODO: Handle unexpected end of input
+      throw "SyntaxError: Unexpected end of input";
     }
     if (peeked.value == Tokens.NUM) {
       tokens.next();
       const data = tokens.next();
       if (data.done) {
-        // TODO: Handle unexpected end of input
+        throw "SyntaxError: Unexpected end of input";
       }
       return new ValueNode(ValueNode.NumberValue, data.value);
     } else if (peeked.value == Tokens.STR) {
       tokens.next();
       const data = tokens.next();
       if (data.done) {
-        // TODO: Handle unexpected end of input
+        throw "SyntaxError: Unexpected end of input";
       }
       return new ValueNode(ValueNode.StringValue, data.value);
     } else if (peeked.value == Tokens.ID) {
       tokens.next();
       const data = tokens.next();
       if (data.done) {
-        // TODO: Handle unexpected end of input
+        throw "SyntaxError: Unexpected end of input";
       }
       return new ValueNode(ValueNode.VariableRef, data.value);
     } else if (peeked.value == Tokens.TRUE) {
@@ -469,7 +455,7 @@ class ValueNode {
       tokens.next();
       const next = tokens.next();
       if (next.done || next.value != Tokens.RBRACE) {
-        //TODO: handle end of input or SyntaxError
+        throw "SyntaxError: Expected `]`";
       }
       return new ValueNode(ValueNode.TableValue);
     }
