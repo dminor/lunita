@@ -51,6 +51,35 @@ important for interviews:
     string     -> "\"" .* "\""
     identifier -> [A-Za-z]+
 
+## Left as an exercise for the reader
+
+Here's a list of some of the things present in Lua that are not implemented in Lunita, left as
+an exercise for the reader:
+
+- <b>Other mathematical / logical operators:</b> Lunita only supports the `~=` operator, the others
+  can be implemented using a similar approach, with care to ensure that the appropriate precedence
+  rules are supported.
+- <b>Numerical for loop:</b> The current implementation calls the `limit` value on every iteration,
+  it should only be called once. Also the `step` is not currently supported. Modify the parser
+  to support the `step` parameter, and fix the code generation to not evaluate the control
+  expressions more than once.
+- <b>Generic for loop:</b> Add an iterator implementation, and allow a generic for statement
+  that works with them.
+- <b>Error handling:</b> Modify the tokenizer to collect information about where in the input
+  file a token occurred, and use this information to improve error handling.
+- <b>Getting / setting table values:</b> Currently this is faked in the `call` syntax to allow
+  things like `string.len` but this will not work for nested calls like `a.b.c`. It's also not
+  currently possible to set a value in a table. Modify the parser to properly handle nested
+  table access calls, as well as assigning to table values.
+- <b>Table constructors: </b> There's a syntax for [table constructors](https://www.lua.org/manual/5.4/manual.html#3.4.9)
+  that could be added to the parser once it's possible to set table values.
+- <b>Colon syntax:</b> Lua supports using a colon syntax like `s1:len()` that implicitly passes
+  the current object as the first argument to the function. Implementing this requires changing
+  the tokenizer and parser, as well as making sure that appropriate functions are installed on
+  newly created string instances.
+- <b>Metatables:</b> [Metatables](https://www.lua.org/manual/5.4/manual.html#2.4) are a way of
+  modifying the behaviour of tables, to allow for things like operator overloading.
+
 ## Colophon
 
-The lunita logo was made by a souless ai.
+The Lunita logo was made by a souless ai.
