@@ -245,7 +245,6 @@ class ForLoopNode {
     }
     const body = [];
     while (true) {
-      body.push(statement(tokens));
       token = tokens.peek();
       if (token.done) {
         throw "SyntaxError: Unexpected end of input";
@@ -254,6 +253,7 @@ class ForLoopNode {
         tokens.next();
         break;
       }
+      body.push(statement(tokens));
     }
     return new ForLoopNode(initializer, range, body);
   }
