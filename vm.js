@@ -99,8 +99,6 @@ class VirtualMachine {
     this.ip = 0;
   }
 
-  lookupEnv(id) {}
-
   step() {
     switch (this.instructions[this.ip]) {
       case Opcodes.CALL:
@@ -180,9 +178,6 @@ class VirtualMachine {
       case Opcodes.NUMBER:
         this.ip += 1;
         this.stack.push(this.instructions[this.ip]);
-        break;
-      case Opcodes.POP:
-        this.stack.pop();
         break;
       case Opcodes.RET:
         this.env.pop();

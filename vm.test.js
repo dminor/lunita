@@ -132,23 +132,6 @@ test("neq", () => {
   expect(vm.stack[0]).toBe(false);
 });
 
-test("pop", () => {
-  let instr = [
-    Opcodes.NUMBER,
-    1,
-    Opcodes.NUMBER,
-    2,
-    Opcodes.NUMBER,
-    3,
-    Opcodes.POP,
-    Opcodes.POP,
-  ];
-  let vm = new VirtualMachine(instr);
-  vm.run();
-  expect(vm.stack.length).toBe(1);
-  expect(vm.stack[0]).toBe(1);
-});
-
 test("strings", () => {
   let instr = [
     Opcodes.ID,
@@ -334,7 +317,7 @@ test("locals", () => {
           Opcodes.ID,
           "v",
           Opcodes.GETENV,
-          Opcodes.RET
+          Opcodes.RET,
         ];
         vm.ip = 0;
       },
