@@ -441,27 +441,32 @@ class ValueNode {
         throw "SyntaxError: Unexpected end of input";
       }
       return new ValueNode(ValueNode.NumberValue, data.value);
-    } else if (peeked.value == Tokens.STR) {
+    }
+    if (peeked.value == Tokens.STR) {
       tokens.next();
       const data = tokens.next();
       if (data.done) {
         throw "SyntaxError: Unexpected end of input";
       }
       return new ValueNode(ValueNode.StringValue, data.value);
-    } else if (peeked.value == Tokens.ID) {
+    }
+    if (peeked.value == Tokens.ID) {
       tokens.next();
       const data = tokens.next();
       if (data.done) {
         throw "SyntaxError: Unexpected end of input";
       }
       return new ValueNode(ValueNode.VariableRef, data.value);
-    } else if (peeked.value == Tokens.TRUE) {
+    }
+    if (peeked.value == Tokens.TRUE) {
       tokens.next();
       return new ValueNode(ValueNode.BooleanValue, true);
-    } else if (peeked.value == Tokens.FALSE) {
+    }
+    if (peeked.value == Tokens.FALSE) {
       tokens.next();
       return new ValueNode(ValueNode.BooleanValue, false);
-    } else if (peeked.value == Tokens.LBRACE) {
+    }
+    if (peeked.value == Tokens.LBRACE) {
       tokens.next();
       const next = tokens.next();
       if (next.done || next.value != Tokens.RBRACE) {
