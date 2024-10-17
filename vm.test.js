@@ -317,3 +317,46 @@ test("values", () => {
   expect(vm.stack.length).toBe(1);
   expect(vm.stack[0]).toBe(true);
 });
+
+test("locals", () => {
+  let instr = [
+    Opcodes.FUNCTION,
+    {
+      call(vm) {
+        vm.callstack.push([vm.ip, vm.instructions]);
+        vm.instructions = [
+          Opcodes.NOP,
+          Opcodes.ID,
+          "v",
+          Opcodes.NUMBER,
+          2,
+          Opcodes.SETENV,
+          Opcodes.ID,
+          "v",
+          Opcodes.GETENV,
+          Opcodes.RET
+        ];
+        vm.ip = 0;
+      },
+    },
+    Opcodes.ID,
+    "v",
+    Opcodes.NUMBER,
+    1,
+    Opcodes.SETENV,
+    Opcodes.CALL,
+    Opcodes.ID,
+    "ret",
+    Opcodes.SETENV,
+    Opcodes.ID,
+    "v",
+    Opcodes.GETENV,
+  ];
+  let vm = new VirtualMachine(instr);
+  vm.run();
+  expect(vm.stack.length).toBe(1);
+  // The global script should see the initial value 1.
+  expect(vm.stack[0]).toBe(1);
+  // The function script should see its own local variable.
+  vm.env[0].set("ret", 2);
+});
