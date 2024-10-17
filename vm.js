@@ -105,6 +105,7 @@ class VirtualMachine {
     switch (this.instructions[this.ip]) {
       case Opcodes.CALL:
         const fn = this.stack.pop();
+        this.env.push(new Map());
         fn.call(this);
         break;
       case Opcodes.FALSE:
@@ -184,6 +185,7 @@ class VirtualMachine {
         this.stack.pop();
         break;
       case Opcodes.RET:
+        this.env.pop();
         let [ip, instructions] = this.callstack.pop();
         this.instructions = instructions;
         this.ip = ip;
