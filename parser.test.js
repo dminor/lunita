@@ -43,6 +43,21 @@ test("calls", () => {
   expect(parse(tokenize("fn(1)"))).toStrictEqual([
     new CallNode(undefined, "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
   ]);
+  expect(parse(tokenize("fn(1,)"))).toStrictEqual([
+    new CallNode(undefined, "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
+  ]);
+  expect(parse(tokenize("fn(1,2)"))).toStrictEqual([
+    new CallNode(undefined, "fn", [
+      new ValueNode(ValueNode.NumberValue, 1),
+      new ValueNode(ValueNode.NumberValue, 2),
+    ]),
+  ]);
+  expect(parse(tokenize("fn(1,2,)"))).toStrictEqual([
+    new CallNode(undefined, "fn", [
+      new ValueNode(ValueNode.NumberValue, 1),
+      new ValueNode(ValueNode.NumberValue, 2),
+    ]),
+  ]);
   expect(parse(tokenize("fn(fn(1))"))).toStrictEqual([
     new CallNode(undefined, "fn", [
       new CallNode(undefined, "fn", [new ValueNode(ValueNode.NumberValue, 1)]),
@@ -70,6 +85,7 @@ test("calls", () => {
       new ValueNode(ValueNode.StringValue, "hello, world!"),
     ]),
   ]);
+  expect(() => parse(tokenize("fn(1 2)"))).toThrow();
 });
 
 test("binaryops", () => {
@@ -194,7 +210,13 @@ test("functions", () => {
   expect(parse(tokenize("function fn(i) end"))).toStrictEqual([
     new FunctionNode("fn", ["i"], []),
   ]);
+  expect(parse(tokenize("function fn(i,) end"))).toStrictEqual([
+    new FunctionNode("fn", ["i"], []),
+  ]);
   expect(parse(tokenize("function fn(i, j) end"))).toStrictEqual([
+    new FunctionNode("fn", ["i", "j"], []),
+  ]);
+  expect(parse(tokenize("function fn(i, j,) end"))).toStrictEqual([
     new FunctionNode("fn", ["i", "j"], []),
   ]);
   expect(parse(tokenize("function fn(i, j) return i ~= j end"))).toStrictEqual([
@@ -212,4 +234,5 @@ test("functions", () => {
       ]
     ),
   ]);
+  expect(() => parse(tokenize("function fn(i j) end"))).toThrow();
 });

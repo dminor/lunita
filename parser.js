@@ -203,8 +203,13 @@ class CallNode {
       }
       args.push(arg);
       token = tokens.peek();
+      if (token.done) {
+        throw "SyntaxError: Unexpected end of input";
+      }
       if (token.value == Tokens.COMMA) {
         tokens.next();
+      } else if (token.value != Tokens.RPAREN) {
+        throw "SyntaxError: Expected `)`";
       }
     }
     return new CallNode(self, fun, args);
@@ -303,6 +308,8 @@ class FunctionNode {
       }
       if (token.value == Tokens.COMMA) {
         tokens.next();
+      } else if (token.value != Tokens.RPAREN) {
+        throw "SyntaxError: Expected `)`";
       }
     }
     const body = [];
