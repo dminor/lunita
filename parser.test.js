@@ -127,6 +127,17 @@ test("assignments", () => {
 });
 
 test("forloops", () => {
+  expect(parse(tokenize("for i=1, 2 do end"))).toStrictEqual([
+    new ForLoopNode(
+      new AssignmentNode(
+        false,
+        new ValueNode(ValueNode.VariableRef, "i"),
+        new ValueNode(ValueNode.NumberValue, 1)
+      ),
+      new ValueNode(ValueNode.NumberValue, 2),
+      []
+    ),
+  ]);
   expect(
     parse(
       tokenize("for i=1, string.len(c1) do tabla1[i] = string.byte(c1, i) end")
