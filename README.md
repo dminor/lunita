@@ -43,7 +43,7 @@ important for interviews:
     ifthen     -> "if" expression "then" statement "end"
     binaryop   -> expression "~=" expression
     index      -> identifier "[" expression "]"
-    forloop    -> for assignment "," expression "do" statement* "end"
+    forloop    -> "for" assignment "," expression "do" statement* "end"
     function   -> "function" identifier "(" (identifier ",")* identifier? ")" statement* "end"
     return     -> "return" expression
     value      -> number | string | identifier | "true" | "false" | "{}"
