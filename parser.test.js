@@ -86,6 +86,7 @@ test("calls", () => {
     ]),
   ]);
   expect(() => parse(tokenize("fn(1 2)"))).toThrow();
+  expect(() => parse(tokenize("foo.bar."))).toThrow("SyntaxError: Expected `(`");
 });
 
 test("binaryops", () => {
@@ -120,6 +121,8 @@ test("ifthen", () => {
       new ValueNode(ValueNode.NumberValue, 1)
     ),
   ]);
+  expect(() => parse(tokenize("if 1 ~= 2 end"))).toThrow("SyntaxError: Expected `then`");
+  expect(() => parse(tokenize("if 1 ~= 2 then 1 then"))).toThrow("SyntaxError: Expected `end`");
 });
 
 test("assignments", () => {
@@ -235,4 +238,5 @@ test("functions", () => {
     ),
   ]);
   expect(() => parse(tokenize("function fn(i j) end"))).toThrow();
+  expect(() => parse(tokenize("function fn."))).toThrow("SyntaxError: Expected `(`");
 });

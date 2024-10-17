@@ -184,7 +184,7 @@ class CallNode {
   static tryParse(self, fun, tokens) {
     let token = tokens.next();
     if (token.done || token.value != Tokens.LPAREN) {
-      throw "SyntaxError: Expected `)`";
+      throw "SyntaxError: Expected `(`";
     }
     // Parse arguments
     let args = [];
@@ -288,7 +288,7 @@ class FunctionNode {
     let name = identifier(tokens);
     token = tokens.next();
     if (token.done || token.value != Tokens.LPAREN) {
-      throw "SyntaxError: Expected `)`";
+      throw "SyntaxError: Expected `(`";
     }
     const parameters = [];
     while (true) {
@@ -356,7 +356,7 @@ class IfThenNode {
     const body = statement(tokens);
     token = tokens.next();
     if (token.done || token.value != Tokens.END) {
-      throw "SyntaxError: Expected `then`";
+      throw "SyntaxError: Expected `end`";
     }
     return new IfThenNode(condition, body);
   }
