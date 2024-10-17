@@ -39,7 +39,7 @@ important for interviews:
     statement  -> assignment | expression | ifthen | forloop | function | return
     assignment -> "local"? identifier "=" expression
     expression -> call | value | binaryop | index
-    call       -> (identifier ".")? identifier "(" (identifier ",")* expression? ")"
+    call       -> (identifier ".")? identifier "(" (expression ",")* expression? ")"
     ifthen     -> "if" expression "then" statement "end"
     binaryop   -> expression "~=" expression
     index      -> identifier "[" expression "]"
