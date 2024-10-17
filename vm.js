@@ -165,8 +165,8 @@ class VirtualMachine {
         return;
       case Opcodes.NEQ:
         {
-          const lhs = this.stack.pop();
           const rhs = this.stack.pop();
+          const lhs = this.stack.pop();
           this.stack.push(lhs !== rhs);
         }
         break;
