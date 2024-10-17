@@ -126,7 +126,10 @@ class AssignmentNode {
     if (lhs instanceof ValueNode && lhs.value != ValueNode.VariableRef) {
       throw "SyntaxError: Expected variable reference";
     }
-    tokens.next();
+    const next = tokens.next();
+    if (next.done || next.value != Tokens.EQ) {
+      throw "SyntaxError: Expected `=`";
+    }
     const rhs = expression(tokens);
     return new AssignmentNode(isLocal, lhs, rhs);
   }

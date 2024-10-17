@@ -121,6 +121,9 @@ test("assignments", () => {
       new ValueNode(ValueNode.TableValue)
     ),
   ]);
+
+  expect(() => parse(tokenize("local foo ( 1"))).toThrow();
+  expect(() => parse(tokenize("for foo ( 1, 10 do 1 end"))).toThrow();
 });
 
 test("forloops", () => {
