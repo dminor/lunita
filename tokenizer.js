@@ -125,9 +125,8 @@ function tokenize(source) {
         if (matchedString) {
           const string = matchedString[0];
           i += string.length;
-          const idx = Tokens.keywords.indexOf(string);
-          if (idx > -1) {
-            result.push(Tokens.keywords[idx]);
+          if (Tokens.keywords.includes(string)) {
+            result.push(string);
           } else {
             result.push(Tokens.ID, string);
           }
