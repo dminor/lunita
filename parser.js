@@ -119,7 +119,7 @@ class AssignmentNode {
   }
 
   visit(visitor) {
-    visitor.visitAssignmentNode(this);
+    return visitor.visitAssignmentNode(this);
   }
 
   static tryParse(isLocal, lhs, tokens) {
@@ -148,7 +148,7 @@ class BinaryOperationNode {
   }
 
   visit(visitor) {
-    visitor.visitBinaryOperationNode(this);
+    return visitor.visitBinaryOperationNode(this);
   }
 
   static tryParse(lhs, tokens) {
@@ -178,7 +178,7 @@ class CallNode {
   }
 
   visit(visitor) {
-    visitor.visitCallNode(this);
+    return visitor.visitCallNode(this);
   }
 
   static tryParse(self, fun, tokens) {
@@ -229,7 +229,7 @@ class ForLoopNode {
   }
 
   visit(visitor) {
-    visitor.visitForLoopNode(this);
+    return visitor.visitForLoopNode(this);
   }
 
   static tryParse(tokens) {
@@ -276,7 +276,7 @@ class FunctionNode {
   }
 
   visit(visitor) {
-    visitor.visitFunctionNode(this);
+    return visitor.visitFunctionNode(this);
   }
 
   static tryParse(tokens) {
@@ -338,7 +338,7 @@ class IfThenNode {
   }
 
   visit(visitor) {
-    visitor.visitIfThenNode(this);
+    return visitor.visitIfThenNode(this);
   }
 
   static tryParse(tokens) {
@@ -372,7 +372,7 @@ class IndexNode {
   }
 
   visit(visitor) {
-    visitor.visitIndexNode(this);
+    return visitor.visitIndexNode(this);
   }
 
   static tryParse(identifier, tokens) {
@@ -397,7 +397,7 @@ class ReturnNode {
   }
 
   visit(visitor) {
-    visitor.visitReturnNode(this);
+    return visitor.visitReturnNode(this);
   }
 
   static tryParse(tokens) {
@@ -426,7 +426,7 @@ class ValueNode {
   }
 
   visit(visitor) {
-    visitor.visitValueNode(this);
+    return visitor.visitValueNode(this);
   }
 
   static tryParse(tokens) {
