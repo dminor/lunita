@@ -51,6 +51,10 @@ important for interviews:
     string     -> "\"" .* "\""
     identifier -> [A-Za-z]+
 
+## Other
+
+Here are the slides for my talk [Cómo crear un intérprete en 25 minutos o menos](https://docs.google.com/presentation/d/1jElmyqj0FuYjLqNFe52otF8UMK5iL7z65o0jiJ-wz1o/edit) at BoyaConf, 2024.
+
 ## Colophon
 
 The lunita logo was made by a souless ai.
